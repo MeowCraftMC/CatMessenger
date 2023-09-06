@@ -17,6 +17,10 @@ public class PlayerEventHandler implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        if (!config.broadcastSystemMessage()) {
+            return;
+        }
+
         var player = event.getPlayer();
         var name = player.getDisplayName();
         MessageSender.sendSystemMessage(player.getServer(), name + " 加入 " + config.getServerName() + " 服务器");
@@ -24,9 +28,12 @@ public class PlayerEventHandler implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        if (!config.broadcastSystemMessage()) {
+            return;
+        }
+
         var player = event.getPlayer();
         var name = player.getDisplayName();
-
         MessageSender.sendSystemMessage(player.getServer(), name + " 退出 " + config.getServerName() + " 服务器");
     }
 }

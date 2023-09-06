@@ -16,6 +16,6 @@ public class MessageUpdateListener implements UpdatesListener {
     }
 
     private void processUpdate(Update update) {
-
+        System.out.println(update.message());
     }
 }
