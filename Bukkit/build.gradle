@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+    id 'com.rikonardo.papermake' version '1.0.6'
+}
+
+group = "${rootProject.group}.bukkit".toString()
+version = rootProject.version
+
+dependencies {
+    implementation 'org.jetbrains:annotations:24.0.0'
+    compileOnly 'org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT'
+
+    implementation project(':Common')
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+
+devServer {
+}

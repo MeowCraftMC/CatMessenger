@@ -1,0 +1,4 @@
+name: CatMessenger
+version: '${version}'
+main: cx.rain.mc.catmessenger.bungee.MessengerBungee
+author: qyl27

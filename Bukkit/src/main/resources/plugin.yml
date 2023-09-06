@@ -1,0 +1,4 @@
+name: CatMessenger
+version: '${version}'
+main: cx.rain.mc.catmessenger.bukkit.MessengerBukkit
+api-version: '1.20'

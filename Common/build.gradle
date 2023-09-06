@@ -1,0 +1,11 @@
+plugins {
+    id 'java'
+}
+
+group = "${rootProject.group}.common".toString()
+version = rootProject.version
+
+dependencies {
+    implementation 'com.github.pengrad:java-telegram-bot-api:6.8.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+}

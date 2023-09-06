@@ -1,0 +1,5 @@
+rootProject.name = 'CatMessenger'
+
+include ':Common'
+include ':Bungeecord'
+include ':Bukkit'

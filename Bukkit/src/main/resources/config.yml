@@ -1,0 +1,4 @@
+server_name: "ExampleMinecraftServer"
+trim_length: 30
+broadcast_system_message: true
+show_system_message: true
