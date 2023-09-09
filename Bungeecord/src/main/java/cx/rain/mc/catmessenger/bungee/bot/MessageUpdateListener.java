@@ -1,4 +1,4 @@
-package cx.rain.mc.catmessenger.common.bot;
+package cx.rain.mc.catmessenger.bungee.bot;
 
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
@@ -16,6 +16,6 @@ public class MessageUpdateListener implements UpdatesListener {
     }
 
     private void processUpdate(Update update) {
-        System.out.println(update.message());
+        System.out.println(update.message().text());
     }
 }

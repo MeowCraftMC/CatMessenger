@@ -1,2 +1,13 @@
-telegram_token: ""
-proxy: "http://localhost:10809"
+telegram:
+  token: ""
+  group_id: ""
+proxy:
+  # Supports none, http or socks
+  type: "http"
+  host: "localhost"
+  port: 10809
+format:
+  # 1 for username, 2 for content
+  message: "<b>%1$s</b>:\n%2$s"
+  # 1 for content
+  system: "【系统】%1$s"

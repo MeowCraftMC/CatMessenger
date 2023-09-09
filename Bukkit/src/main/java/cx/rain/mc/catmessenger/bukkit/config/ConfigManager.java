@@ -7,6 +7,8 @@ public class ConfigManager {
     private final FileConfiguration config;
 
     public ConfigManager(MessengerBukkit plugin) {
+        plugin.saveDefaultConfig();
+
         config = plugin.getConfig();
     }
 

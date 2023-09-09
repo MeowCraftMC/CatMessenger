@@ -11,8 +11,7 @@ import java.time.format.DateTimeFormatter;
 
 public class MessageSender {
     public static void sendSystemMessage(Server server, String content) {
-        var sender = "";
-        sendMessage(server, sender, content);
+        sendMessage(server, "", content);
     }
 
     public static void sendChatMessage(Player player, String content) {
