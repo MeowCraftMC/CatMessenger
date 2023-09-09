@@ -27,4 +27,8 @@ public class ConfigManager {
     public boolean showSystemMessage() {
         return config.getBoolean("show_system_message");
     }
+
+    public String getSocketURL() {
+        return config.getString("socket_url");
+    }
 }

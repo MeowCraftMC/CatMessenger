@@ -5,7 +5,7 @@ import cx.rain.mc.catmessenger.bungee.config.ConfigManager;
 import cx.rain.mc.catmessenger.bungee.hadler.PluginMessageHandler;
 import cx.rain.mc.catmessenger.bungee.http.OkHttpRetryInterceptor;
 import cx.rain.mc.catmessenger.bungee.utility.MessageSendHelper;
-import cx.rain.mc.catmessenger.common.CatMessenger;
+import cx.rain.mc.catmessenger.common.Constants;
 import net.md_5.bungee.api.plugin.Plugin;
 import okhttp3.OkHttpClient;
 
@@ -31,7 +31,7 @@ public final class MessengerBungee extends Plugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
-        getProxy().registerChannel(CatMessenger.MESSAGES_CHANNEL_NAME);
+        getProxy().registerChannel(Constants.MESSAGES_CHANNEL_NAME);
 
         getProxy().getPluginManager().registerListener(this, new PluginMessageHandler());
 

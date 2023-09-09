@@ -10,6 +10,7 @@ dependencies {
 
     implementation 'com.github.pengrad:java-telegram-bot-api:6.8.0'
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+    implementation 'io.socket:socket.io-server:4.1.0'
 
     implementation project(':Common')
 }

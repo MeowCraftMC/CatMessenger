@@ -52,3 +52,12 @@ dependencies {
 }
 
 jar.finalizedBy(shadowJar)
+
+shadowJar {
+    relocate 'com', 'libs.com'
+    relocate 'org', 'libs.org'
+    relocate 'io', 'libs.io'
+    relocate 'kotlin', 'libs.kotlin'
+    relocate 'okhttp3', 'libs.okhttp3'
+    relocate 'okio', 'libs.okio'
+}
