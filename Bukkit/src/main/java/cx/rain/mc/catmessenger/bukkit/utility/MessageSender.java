@@ -2,7 +2,7 @@ package cx.rain.mc.catmessenger.bukkit.utility;
 
 import com.google.common.io.ByteStreams;
 import cx.rain.mc.catmessenger.bukkit.MessengerBukkit;
-import cx.rain.mc.catmessenger.common.CatMessenger;
+import cx.rain.mc.catmessenger.common.Constants;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
@@ -20,7 +20,7 @@ public class MessageSender {
     }
 
     private static void sendMessage(Server server, String sender, String content) {
-        var platform = CatMessenger.CHANNEL_PLATFORM_MINECRAFT_BUKKIT;
+        var platform = Constants.CHANNEL_PLATFORM_MINECRAFT_BUKKIT;
         var from = MessengerBukkit.getInstance().getConfigManager().getServerName();
         var time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("hh:mm:ss"));
 
@@ -31,6 +31,6 @@ public class MessageSender {
         output.writeUTF(time);
         output.writeUTF(content);
 
-        server.sendPluginMessage(MessengerBukkit.getInstance(), CatMessenger.MESSAGES_CHANNEL_NAME, output.toByteArray());
+        server.sendPluginMessage(MessengerBukkit.getInstance(), Constants.MESSAGES_CHANNEL_NAME, output.toByteArray());
     }
 }

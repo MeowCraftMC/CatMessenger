@@ -5,13 +5,13 @@ import cx.rain.mc.catmessenger.bungee.config.ConfigManager;
 import cx.rain.mc.catmessenger.bungee.hadler.PluginMessageHandler;
 import cx.rain.mc.catmessenger.bungee.http.OkHttpRetryInterceptor;
 import cx.rain.mc.catmessenger.bungee.utility.MessageSendHelper;
-import cx.rain.mc.catmessenger.common.CatMessenger;
+import cx.rain.mc.catmessenger.common.Constants;
 import net.md_5.bungee.api.plugin.Plugin;
 import okhttp3.OkHttpClient;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 public final class MessengerBungee extends Plugin {
     private static MessengerBungee INSTANCE;
@@ -20,6 +20,8 @@ public final class MessengerBungee extends Plugin {
 
     private Bot bot;
 
+    // Todo: qyl27: do we need bungee?
+    @Deprecated
     public MessengerBungee() {
         INSTANCE = this;
 
@@ -31,7 +33,7 @@ public final class MessengerBungee extends Plugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
-        getProxy().registerChannel(CatMessenger.MESSAGES_CHANNEL_NAME);
+        getProxy().registerChannel(Constants.MESSAGES_CHANNEL_NAME);
 
         getProxy().getPluginManager().registerListener(this, new PluginMessageHandler());
 
@@ -69,7 +71,9 @@ public final class MessengerBungee extends Plugin {
         }
 
         var okHttpBuilder = new OkHttpClient().newBuilder()
-                .readTimeout(Duration.ZERO)
+                .connectTimeout(75, TimeUnit.SECONDS)
+                .writeTimeout(75, TimeUnit.SECONDS)
+                .readTimeout(75, TimeUnit.SECONDS)
                 .addInterceptor(new OkHttpRetryInterceptor(5));
 
         if (configManager.hasProxy()) {

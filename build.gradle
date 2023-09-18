@@ -52,3 +52,13 @@ dependencies {
 }
 
 jar.finalizedBy(shadowJar)
+
+shadowJar {
+    relocate 'com.google.gson', 'libs.com.google.gson'
+    relocate 'com.pengrad', 'libs.com.pengrad'
+    relocate 'org.intellij.lang.annotations', 'libs.org.intellij.lang.annotations'
+    relocate 'org.jetbrains.annotations', 'libs.org.jetbrains.annotations'
+    relocate 'kotlin', 'libs.kotlin'
+    relocate 'okhttp3', 'libs.okhttp3'
+    relocate 'okio', 'libs.okio'
+}
