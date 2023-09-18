@@ -1,8 +1,13 @@
 package cx.rain.mc.catmessenger.bukkit.networking;
 
+import co.nstant.in.cbor.CborDecoder;
+import co.nstant.in.cbor.CborException;
+import com.upokecenter.cbor.CBORObject;
+import com.upokecenter.cbor.CBORType;
 import cx.rain.mc.catmessenger.bukkit.MessengerBukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.framing.CloseFrame;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
@@ -32,16 +37,26 @@ public class ConnectorClient extends WebSocketClient {
 
     @Override
     public void onMessage(ByteBuffer bytes) {
+        var cbor = CBORObject.DecodeFromBytes(bytes.array());
+        if (cbor.getType() != CBORType.Array) {
+            return;
+        }
 
+        // Todo
     }
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        plugin.getLogger().info("Disconnected!");
+        if (remote && code != CloseFrame.NORMAL) {
+            reconnect();
+        }
+
+        plugin.getLogger().info("Disconnected! " + reason);
     }
 
     @Override
     public void onError(Exception ex) {
         plugin.getLogger().warning(ex.toString());
+        reconnect();
     }
 }

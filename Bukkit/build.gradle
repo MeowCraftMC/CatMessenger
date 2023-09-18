@@ -11,7 +11,7 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT'
 
     implementation group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.5.4'
-    implementation group: 'co.nstant.in', name: 'cbor', version: '0.9'
+    implementation group: 'com.upokecenter', name: 'cbor', version: '4.5.2'
 
     implementation project(':Common')
 }
