@@ -23,7 +23,7 @@ public class PlayerEventHandler implements Listener {
 
         var player = event.getPlayer();
         var name = player.getDisplayName();
-        MessageSender.sendSystemMessage(player.getServer(), name + " 加入 " + config.getServerName() + " 服务器");
+//        MessageSender.sendSystemMessage(player.getServer(), name + " 加入 " + config.getServerName() + " 服务器");
     }
 
     @EventHandler
@@ -34,6 +34,6 @@ public class PlayerEventHandler implements Listener {
 
         var player = event.getPlayer();
         var name = player.getDisplayName();
-        MessageSender.sendSystemMessage(player.getServer(), name + " 退出 " + config.getServerName() + " 服务器");
+//        MessageSender.sendSystemMessage(player.getServer(), name + " 退出 " + config.getServerName() + " 服务器");
     }
 }

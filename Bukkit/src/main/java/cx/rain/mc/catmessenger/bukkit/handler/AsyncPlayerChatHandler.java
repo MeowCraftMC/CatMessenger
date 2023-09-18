@@ -11,6 +11,6 @@ public class AsyncPlayerChatHandler implements Listener {
         var player = event.getPlayer();
         var content = event.getMessage();
 
-        MessageSender.sendChatMessage(player, content);
+//        MessageSender.sendChatMessage(player, content);
     }
 }

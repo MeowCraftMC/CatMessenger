@@ -1,5 +1,6 @@
 server_name: "ExampleMinecraftServer"
 broadcast_system_message: true
 show_system_message: true
-remote_connector: "ws://localhost:33927"
-connector_secret: "<Insert secret key here!>"
+connector:
+  url: "ws://localhost:33927"
+  secret: "<Insert secret key here!>"

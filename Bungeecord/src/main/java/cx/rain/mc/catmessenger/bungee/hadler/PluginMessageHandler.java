@@ -11,7 +11,7 @@ import net.md_5.bungee.event.EventHandler;
 public class PluginMessageHandler implements Listener {
     @EventHandler
     public void onPluginMessage(PluginMessageEvent event) {
-        if (!event.getTag().equalsIgnoreCase(Constants.MESSAGES_CHANNEL_NAME)) {
+        if (!event.getTag().equalsIgnoreCase(Constants.CHANNEL_ID)) {
             return;
         }
 

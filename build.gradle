@@ -1,6 +1,7 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'java'
+    id 'com.rikonardo.papermake' version '1.0.6'
 }
 
 group = 'cx.rain.mc.catmessenger'
@@ -47,7 +48,10 @@ subprojects {
 
 dependencies {
     implementation project(':Common')
-    implementation project(':Bungeecord')
+
+    // Todo: qyl27: Remove BungeeCord support now.
+//    implementation project(':Bungeecord')
+
     implementation project(':Bukkit')
 }
 
@@ -61,4 +65,7 @@ shadowJar {
     relocate 'kotlin', 'libs.kotlin'
     relocate 'okhttp3', 'libs.okhttp3'
     relocate 'okio', 'libs.okio'
+    relocate 'org.slf4j', 'libs.org.slf4j'
+    relocate 'org.java_websocket', 'libs.org.java_websocket'
+    relocate 'com.fasterxml.jackson', 'libs.com.fasterxml.jackson'
 }

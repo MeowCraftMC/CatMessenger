@@ -27,10 +27,10 @@ public class ConfigManager {
     }
 
     public String getRemoteConnector() {
-        return config.getString("remote_connector");
+        return config.getString("connector.url");
     }
 
     public String getConnectorSecret() {
-        return config.getString("connector_secret");
+        return config.getString("connector.secret");
     }
 }

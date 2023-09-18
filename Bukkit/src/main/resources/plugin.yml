@@ -2,5 +2,6 @@ name: CatMessenger
 version: '${version}'
 main: cx.rain.mc.catmessenger.bukkit.MessengerBukkit
 api-version: '1.20'
+load: STARTUP
 authors:
   - qyl27

@@ -33,7 +33,7 @@ public final class MessengerBungee extends Plugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
-        getProxy().registerChannel(Constants.MESSAGES_CHANNEL_NAME);
+        getProxy().registerChannel(Constants.CHANNEL_ID);
 
         getProxy().getPluginManager().registerListener(this, new PluginMessageHandler());
 

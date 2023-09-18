@@ -1,11 +1,11 @@
 package cx.rain.mc.catmessenger.bukkit.networking;
 
-import co.nstant.in.cbor.CborDecoder;
-import co.nstant.in.cbor.CborException;
-import com.upokecenter.cbor.CBORObject;
-import com.upokecenter.cbor.CBORType;
 import cx.rain.mc.catmessenger.bukkit.MessengerBukkit;
-import org.bukkit.plugin.java.JavaPlugin;
+import cx.rain.mc.catmessenger.bukkit.networking.packet.c2s.AuthenticateC2SPacket;
+import cx.rain.mc.catmessenger.bukkit.networking.packet.c2s.C2SPacket;
+import cx.rain.mc.catmessenger.bukkit.networking.packet.c2s.RegisterC2SPacket;
+import cx.rain.mc.catmessenger.bukkit.utility.exception.MalformedPacketException;
+import cx.rain.mc.catmessenger.bukkit.utility.exception.NotSupportedPacketException;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.framing.CloseFrame;
 import org.java_websocket.handshake.ServerHandshake;
@@ -16,18 +16,23 @@ import java.nio.ByteBuffer;
 
 public class ConnectorClient extends WebSocketClient {
     private MessengerBukkit plugin;
+    private ServerPacketHandler handler;
 
     public ConnectorClient(MessengerBukkit plugin) throws URISyntaxException {
         super(new URI(plugin.getConfigManager().getRemoteConnector()));
 
         this.plugin = plugin;
+        handler = new ServerPacketHandler(plugin);
+
+        setConnectionLostTimeout(0);
     }
 
     @Override
     public void onOpen(ServerHandshake handshake) {
-
-
         plugin.getLogger().info("Connected!");
+
+        send(new AuthenticateC2SPacket(plugin.getConfigManager().getServerName(), plugin.getConfigManager().getConnectorSecret()));
+        send(new RegisterC2SPacket());
     }
 
     @Override
@@ -37,12 +42,13 @@ public class ConnectorClient extends WebSocketClient {
 
     @Override
     public void onMessage(ByteBuffer bytes) {
-        var cbor = CBORObject.DecodeFromBytes(bytes.array());
-        if (cbor.getType() != CBORType.Array) {
-            return;
+        try {
+            handler.handleBytes(bytes.array());
+        } catch (NotSupportedPacketException ex) {
+            plugin.getLogger().warning("Not implemented packet! " + ex);
+        } catch (MalformedPacketException ex) {
+            plugin.getLogger().warning("Malformed packet! " + ex);
         }
-
-        // Todo
     }
 
     @Override
@@ -58,5 +64,13 @@ public class ConnectorClient extends WebSocketClient {
     public void onError(Exception ex) {
         plugin.getLogger().warning(ex.toString());
         reconnect();
+    }
+
+    public void send(C2SPacket packet) {
+        try {
+            send(packet.toBytes());
+        } catch (Exception ex) {
+            plugin.getLogger().severe("Cannot send message! " + ex);
+        }
     }
 }

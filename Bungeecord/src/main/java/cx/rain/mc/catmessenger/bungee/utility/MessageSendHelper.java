@@ -21,7 +21,7 @@ public class MessageSendHelper {
         var data = output.toByteArray();
 
         for (var entry : servers.entrySet()) {
-            entry.getValue().sendData(Constants.MESSAGES_CHANNEL_NAME, data);
+            entry.getValue().sendData(Constants.CHANNEL_ID, data);
         }
 
         if (!platform.equalsIgnoreCase(Constants.CHANNEL_PLATFORM_TELEGRAM)) {
