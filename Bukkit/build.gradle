@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-//    id 'com.rikonardo.papermake' version '1.0.6'
 }
 
 group = "${rootProject.group}.bukkit".toString()
@@ -11,7 +10,7 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT'
 
     implementation group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.5.4'
-    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-cbor', version: '2.15.2'
+    implementation group: 'com.authlete', name: 'cbor', version: '1.4'
 
     implementation project(':Common')
 }

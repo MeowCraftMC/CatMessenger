@@ -1,71 +1,56 @@
 package cx.rain.mc.catmessenger.bukkit.utility;
 
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
-import com.fasterxml.jackson.dataformat.cbor.CBORParser;
+import com.authlete.cbor.token.*;
 import cx.rain.mc.catmessenger.bukkit.utility.exception.MalformedPacketException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 public class CborReader {
-    private static final CBORFactory FACTORY = CBORFactory.builder().build();
+    private final CBORTokenizer decoder;
 
-    private final CBORParser parser;
+    private int currentIndex = 0;
 
     public CborReader(byte[] bytes) {
+        decoder = new CBORTokenizer(new ByteArrayInputStream(bytes));
+    }
+
+    private CBORToken<?> nextToken() {
         try {
-            parser = FACTORY.createParser(bytes);
+            return decoder.next();
         } catch (IOException ex) {
             throw new MalformedPacketException(ex);
         }
     }
 
     public void readStartArray() {
-        try {
-            var result = parser.getCurrentToken();
-            parser.nextToken();
-            if (result != JsonToken.START_ARRAY) {
-                throw new MalformedPacketException();
-            }
-        } catch (IOException ex) {
-            throw new MalformedPacketException(ex);
+        var token = nextToken();
+        if (!(token instanceof CTIndefiniteArrayOpener)) {
+            throw new MalformedPacketException();
         }
     }
 
     public void readEndArray() {
-        try {
-            var result = parser.getCurrentToken() == JsonToken.END_ARRAY;
-            parser.nextToken();
-            if (!result) {
-                throw new MalformedPacketException();
-            }
-        } catch (IOException ex) {
-            throw new MalformedPacketException(ex);
+        var token = nextToken();
+        if (!(token instanceof CTBreak)) {
+            throw new MalformedPacketException();
         }
     }
 
     public String readString() {
-        try {
-            var result = parser.getValueAsString();
-            parser.nextToken();
-            if (result == null) {
-                throw new MalformedPacketException();
-            }
-
-            return result;
-        } catch (IOException ex) {
-            throw new MalformedPacketException(ex);
+        var token = nextToken();
+        if (!(token instanceof CTTextString stringToken)) {
+            throw new MalformedPacketException();
         }
+        return stringToken.getValue();
     }
 
     public int readInt32() {
-        try {
-            var result = parser.getIntValue();
-            parser.nextToken();
-            return result;
-        } catch (IOException ex) {
-            throw new MalformedPacketException(ex);
+        var token = nextToken();
+        if (!(token instanceof CTInteger stringToken)) {
+            throw new MalformedPacketException();
         }
+        return stringToken.getValue();
     }
 
     public boolean readBoolean() {

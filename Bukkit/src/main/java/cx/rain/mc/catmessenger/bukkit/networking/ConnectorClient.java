@@ -1,5 +1,6 @@
 package cx.rain.mc.catmessenger.bukkit.networking;
 
+import com.upokecenter.cbor.CBORException;
 import cx.rain.mc.catmessenger.bukkit.MessengerBukkit;
 import cx.rain.mc.catmessenger.bukkit.networking.packet.c2s.AuthenticateC2SPacket;
 import cx.rain.mc.catmessenger.bukkit.networking.packet.c2s.C2SPacket;
@@ -15,8 +16,8 @@ import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 
 public class ConnectorClient extends WebSocketClient {
-    private MessengerBukkit plugin;
-    private ServerPacketHandler handler;
+    private final MessengerBukkit plugin;
+    private final ServerPacketHandler handler;
 
     public ConnectorClient(MessengerBukkit plugin) throws URISyntaxException {
         super(new URI(plugin.getConfigManager().getRemoteConnector()));
