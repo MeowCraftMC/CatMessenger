@@ -47,29 +47,25 @@ public class CborReader {
 
     public int readInt32() {
         var token = nextToken();
-        if (!(token instanceof CTInteger stringToken)) {
+        if (!(token instanceof CTInteger integer)) {
             throw new MalformedPacketException();
         }
-        return stringToken.getValue();
+        return integer.getValue().intValue();
     }
 
     public boolean readBoolean() {
-        try {
-            var result = parser.getBooleanValue();
-            parser.nextToken();
-            return result;
-        } catch (IOException ex) {
-            throw new MalformedPacketException(ex);
+        var token = nextToken();
+        if (!(token instanceof CTBoolean bool)) {
+            throw new MalformedPacketException();
         }
+        return bool.getValue();
     }
 
     public byte[] readBytes() {
-        try {
-            var result = parser.getBinaryValue();
-            parser.nextToken();
-            return result;
-        } catch (IOException ex) {
-            throw new MalformedPacketException(ex);
+        var token = nextToken();
+        if (!(token instanceof CTByteString bytes)) {
+            throw new MalformedPacketException();
         }
+        return bytes.getValue();
     }
 }

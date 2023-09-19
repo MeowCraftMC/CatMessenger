@@ -48,43 +48,11 @@ public class ConfigManager {
         }
     }
 
-    public String getTelegramToken() {
-        return config.getString("telegram.token");
+    public String getRemoteConnector() {
+        return config.getString("connector.url");
     }
 
-    public String getGroupId() {
-        return config.getString("telegram.group_id");
-    }
-
-    public boolean hasProxy() {
-        return getProxyType() == Proxy.Type.DIRECT;
-    }
-
-    public Proxy.Type getProxyType() {
-        var type = config.getString("proxy.type");
-
-        if (type.equalsIgnoreCase("socks")) {
-            return Proxy.Type.SOCKS;
-        } else if (type.equalsIgnoreCase("http")) {
-            return Proxy.Type.HTTP;
-        }
-
-        return Proxy.Type.DIRECT;
-    }
-
-    public String getProxyHost() {
-        return config.getString("proxy.host");
-    }
-
-    public int getProxyPort() {
-        return config.getInt("proxy.port");
-    }
-
-    public String getMessageFormat() {
-        return config.getString("format.message");
-    }
-
-    public String getSystemMessageFormat() {
-        return config.getString("format.system");
+    public String getConnectorSecret() {
+        return config.getString("connector.secret");
     }
 }

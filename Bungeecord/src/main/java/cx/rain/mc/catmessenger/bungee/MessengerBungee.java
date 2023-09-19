@@ -1,9 +1,6 @@
 package cx.rain.mc.catmessenger.bungee;
 
-import cx.rain.mc.catmessenger.bungee.bot.Bot;
 import cx.rain.mc.catmessenger.bungee.config.ConfigManager;
-import cx.rain.mc.catmessenger.bungee.hadler.PluginMessageHandler;
-import cx.rain.mc.catmessenger.bungee.http.OkHttpRetryInterceptor;
 import cx.rain.mc.catmessenger.bungee.utility.MessageSendHelper;
 import cx.rain.mc.catmessenger.common.Constants;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -18,16 +15,12 @@ public final class MessengerBungee extends Plugin {
 
     private final ConfigManager configManager;
 
-    private Bot bot;
-
     // Todo: qyl27: do we need bungee?
     @Deprecated
     public MessengerBungee() {
         INSTANCE = this;
 
         configManager = new ConfigManager(this);
-
-        reloadBot();
     }
 
     @Override
@@ -35,12 +28,9 @@ public final class MessengerBungee extends Plugin {
         // Plugin startup logic
         getProxy().registerChannel(Constants.CHANNEL_ID);
 
-        getProxy().getPluginManager().registerListener(this, new PluginMessageHandler());
-
-        bot.start();
+        getSLF4JLogger().error("Indev now!");
 
         MessageSendHelper.sendSystemMessage("BungeeCord 启动了！"); // Todo: qyl27: I18n.
-        getSLF4JLogger().info("Telegram bot started.");
     }
 
     @Override
@@ -49,7 +39,6 @@ public final class MessengerBungee extends Plugin {
 
         MessageSendHelper.sendSystemMessage("BungeeCord 关闭了！"); // Todo: qyl27: I18n.
 
-        bot.stop();
         getSLF4JLogger().info("Telegram bot stopped.");
     }
 
@@ -59,27 +48,5 @@ public final class MessengerBungee extends Plugin {
 
     public ConfigManager getConfigManager() {
         return configManager;
-    }
-
-    public Bot getBot() {
-        return bot;
-    }
-
-    public void reloadBot() {
-        if (bot != null) {
-            bot.stop();
-        }
-
-        var okHttpBuilder = new OkHttpClient().newBuilder()
-                .connectTimeout(75, TimeUnit.SECONDS)
-                .writeTimeout(75, TimeUnit.SECONDS)
-                .readTimeout(75, TimeUnit.SECONDS)
-                .addInterceptor(new OkHttpRetryInterceptor(5));
-
-        if (configManager.hasProxy()) {
-            okHttpBuilder.setProxy$okhttp(new Proxy(configManager.getProxyType(), new InetSocketAddress(configManager.getProxyHost(), configManager.getProxyPort())));
-        }
-
-        bot = new Bot(configManager.getTelegramToken(), okHttpBuilder.build());
     }
 }

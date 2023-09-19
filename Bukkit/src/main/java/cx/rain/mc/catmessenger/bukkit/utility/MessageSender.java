@@ -1,6 +1,6 @@
 package cx.rain.mc.catmessenger.bukkit.utility;
 
-import cx.rain.mc.catmessenger.bukkit.MessengerBukkit;
+import cx.rain.mc.catmessenger.bukkit.CatMessengerBukkit;
 import cx.rain.mc.catmessenger.bukkit.networking.packet.c2s.C2SPacket;
 
 public class MessageSender {
@@ -29,6 +29,6 @@ public class MessageSender {
 //    }
 
     private static void sendMessageInternal(C2SPacket packet) {
-        MessengerBukkit.getInstance().getConnectorClient().send(packet.toBytes());
+        CatMessengerBukkit.getInstance().getConnectorClient().send(packet.toBytes());
     }
 }

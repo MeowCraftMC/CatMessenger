@@ -1,6 +1,6 @@
 package cx.rain.mc.catmessenger.bukkit.networking;
 
-import cx.rain.mc.catmessenger.bukkit.MessengerBukkit;
+import cx.rain.mc.catmessenger.bukkit.CatMessengerBukkit;
 import cx.rain.mc.catmessenger.bukkit.networking.packet.s2c.ForwardS2CPacket;
 import cx.rain.mc.catmessenger.bukkit.networking.packet.s2c.S2CPacket;
 import cx.rain.mc.catmessenger.bukkit.networking.packet.s2c.SuccessfulS2CPacket;
@@ -18,9 +18,9 @@ public class ServerPacketHandler {
         HANDLERS.put("Forward", new ForwardS2CPacket());
     }
 
-    private final MessengerBukkit plugin;
+    private final CatMessengerBukkit plugin;
 
-    public ServerPacketHandler(MessengerBukkit plugin) {
+    public ServerPacketHandler(CatMessengerBukkit plugin) {
         this.plugin = plugin;
     }
 

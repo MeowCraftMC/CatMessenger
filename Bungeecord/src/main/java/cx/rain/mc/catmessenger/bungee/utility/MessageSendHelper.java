@@ -25,7 +25,7 @@ public class MessageSendHelper {
         }
 
         if (!platform.equalsIgnoreCase(Constants.CHANNEL_PLATFORM_TELEGRAM)) {
-            MessengerBungee.getInstance().getBot().sendMessage(sender, content);
+            // Todo
         }
     }
 

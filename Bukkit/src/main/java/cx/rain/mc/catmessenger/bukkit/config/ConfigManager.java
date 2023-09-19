@@ -1,14 +1,12 @@
 package cx.rain.mc.catmessenger.bukkit.config;
 
-import cx.rain.mc.catmessenger.bukkit.MessengerBukkit;
+import cx.rain.mc.catmessenger.bukkit.CatMessengerBukkit;
 import org.bukkit.configuration.file.FileConfiguration;
-
-import java.net.URI;
 
 public class ConfigManager {
     private final FileConfiguration config;
 
-    public ConfigManager(MessengerBukkit plugin) {
+    public ConfigManager(CatMessengerBukkit plugin) {
         plugin.saveDefaultConfig();
 
         config = plugin.getConfig();
@@ -32,5 +30,33 @@ public class ConfigManager {
 
     public String getConnectorSecret() {
         return config.getString("connector.secret");
+    }
+
+    public String getFormatRaw() {
+        return config.getString("formats.raw");
+    }
+
+    public String getFormatChat() {
+        return config.getString("formats.chat_text");
+    }
+
+    public String getFormatSystem() {
+        return config.getString("formats.system");
+    }
+
+    public String getFormatPlayerOnline() {
+        return config.getString("formats.player_online");
+    }
+
+    public String getFormatPlayerOffline() {
+        return config.getString("formats.player_offline");
+    }
+
+    public String getFormatServerOnline() {
+        return config.getString("formats.server_online");
+    }
+
+    public String getFormatServerOffline() {
+        return config.getString("formats.server_offline");
     }
 }

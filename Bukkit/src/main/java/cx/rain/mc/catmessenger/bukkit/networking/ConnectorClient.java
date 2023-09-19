@@ -1,12 +1,15 @@
 package cx.rain.mc.catmessenger.bukkit.networking;
 
-import com.upokecenter.cbor.CBORException;
-import cx.rain.mc.catmessenger.bukkit.MessengerBukkit;
+import cx.rain.mc.catmessenger.bukkit.CatMessengerBukkit;
 import cx.rain.mc.catmessenger.bukkit.networking.packet.c2s.AuthenticateC2SPacket;
 import cx.rain.mc.catmessenger.bukkit.networking.packet.c2s.C2SPacket;
+import cx.rain.mc.catmessenger.bukkit.networking.packet.c2s.PublishC2SPacket;
 import cx.rain.mc.catmessenger.bukkit.networking.packet.c2s.RegisterC2SPacket;
+import cx.rain.mc.catmessenger.bukkit.networking.payload.MessagePayload;
+import cx.rain.mc.catmessenger.bukkit.networking.payload.ServerLifecyclePayload;
 import cx.rain.mc.catmessenger.bukkit.utility.exception.MalformedPacketException;
 import cx.rain.mc.catmessenger.bukkit.utility.exception.NotSupportedPacketException;
+import org.bukkit.Bukkit;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.framing.CloseFrame;
 import org.java_websocket.handshake.ServerHandshake;
@@ -16,10 +19,10 @@ import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 
 public class ConnectorClient extends WebSocketClient {
-    private final MessengerBukkit plugin;
+    private final CatMessengerBukkit plugin;
     private final ServerPacketHandler handler;
 
-    public ConnectorClient(MessengerBukkit plugin) throws URISyntaxException {
+    public ConnectorClient(CatMessengerBukkit plugin) throws URISyntaxException {
         super(new URI(plugin.getConfigManager().getRemoteConnector()));
 
         this.plugin = plugin;
@@ -34,6 +37,8 @@ public class ConnectorClient extends WebSocketClient {
 
         send(new AuthenticateC2SPacket(plugin.getConfigManager().getServerName(), plugin.getConfigManager().getConnectorSecret()));
         send(new RegisterC2SPacket());
+
+        send(new ServerLifecyclePayload(true));
     }
 
     @Override
@@ -55,7 +60,7 @@ public class ConnectorClient extends WebSocketClient {
     @Override
     public void onClose(int code, String reason, boolean remote) {
         if (remote && code != CloseFrame.NORMAL) {
-            reconnect();
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this::reconnect, 1);
         }
 
         plugin.getLogger().info("Disconnected! " + reason);
@@ -64,14 +69,22 @@ public class ConnectorClient extends WebSocketClient {
     @Override
     public void onError(Exception ex) {
         plugin.getLogger().warning(ex.toString());
-        reconnect();
+        // Todo: qyl27: Need reconnect?
     }
 
     public void send(C2SPacket packet) {
         try {
             send(packet.toBytes());
         } catch (Exception ex) {
-            plugin.getLogger().severe("Cannot send message! " + ex);
+            plugin.getLogger().severe("Cannot send packet! " + ex);
+        }
+    }
+
+    public void send(MessagePayload payload) {
+        try {
+            send(new PublishC2SPacket(payload));
+        } catch (Exception ex) {
+            plugin.getLogger().severe("Cannot send payload! " + ex);
         }
     }
 }

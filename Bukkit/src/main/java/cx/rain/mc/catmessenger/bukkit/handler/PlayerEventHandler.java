@@ -1,8 +1,8 @@
 package cx.rain.mc.catmessenger.bukkit.handler;
 
-import cx.rain.mc.catmessenger.bukkit.MessengerBukkit;
+import cx.rain.mc.catmessenger.bukkit.CatMessengerBukkit;
 import cx.rain.mc.catmessenger.bukkit.config.ConfigManager;
-import cx.rain.mc.catmessenger.bukkit.utility.MessageSender;
+import cx.rain.mc.catmessenger.bukkit.networking.payload.PlayerOnlinePayload;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -11,7 +11,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class PlayerEventHandler implements Listener {
     private final ConfigManager config;
 
-    public PlayerEventHandler(MessengerBukkit plugin) {
+    public PlayerEventHandler(CatMessengerBukkit plugin) {
         config = plugin.getConfigManager();
     }
 
@@ -23,7 +23,8 @@ public class PlayerEventHandler implements Listener {
 
         var player = event.getPlayer();
         var name = player.getDisplayName();
-//        MessageSender.sendSystemMessage(player.getServer(), name + " 加入 " + config.getServerName() + " 服务器");
+
+        CatMessengerBukkit.getInstance().getConnectorClient().send(new PlayerOnlinePayload(true, name));
     }
 
     @EventHandler
@@ -34,6 +35,6 @@ public class PlayerEventHandler implements Listener {
 
         var player = event.getPlayer();
         var name = player.getDisplayName();
-//        MessageSender.sendSystemMessage(player.getServer(), name + " 退出 " + config.getServerName() + " 服务器");
+        CatMessengerBukkit.getInstance().getConnectorClient().send(new PlayerOnlinePayload(false, name));
     }
 }

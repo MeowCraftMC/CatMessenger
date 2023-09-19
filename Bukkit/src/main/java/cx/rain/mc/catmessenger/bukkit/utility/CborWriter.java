@@ -1,28 +1,22 @@
 package cx.rain.mc.catmessenger.bukkit.utility;
 
-import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
-import com.fasterxml.jackson.dataformat.cbor.CBORGenerator;
+import com.authlete.cbor.CBOROutputStream;
 
 import java.io.*;
+import java.util.Base64;
 
 public class CborWriter {
-    private static final CBORFactory FACTORY = CBORFactory.builder().build();
-
     private final ByteArrayOutputStream out;
-    private final CBORGenerator generator;
+    private final CBOROutputStream cbor;
 
     public CborWriter() {
         out = new ByteArrayOutputStream();
-        try {
-            generator = FACTORY.createGenerator(out);
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
+        cbor = new CBOROutputStream(out);
     }
 
     public void writeStartArray() {
         try {
-            generator.writeStartArray();
+            cbor.write(0x9f);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -30,7 +24,7 @@ public class CborWriter {
 
     public void writeEndArray() {
         try {
-            generator.writeEndArray();
+            cbor.write(0xff);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -38,7 +32,7 @@ public class CborWriter {
 
     public void writeString(String value) {
         try {
-            generator.writeString(value);
+            cbor.writeString(value);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -46,7 +40,7 @@ public class CborWriter {
 
     public void writeInt32(int value) {
         try {
-            generator.writeNumber(value);
+            cbor.writeInteger(value);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -54,7 +48,7 @@ public class CborWriter {
 
     public void writeBoolean(boolean value) {
         try {
-            generator.writeBoolean(value);
+            cbor.writeBoolean(value);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -62,7 +56,7 @@ public class CborWriter {
 
     public void writeBytes(byte[] value) {
         try {
-            generator.writeBinary(value);
+            cbor.writeByteArray(value);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
