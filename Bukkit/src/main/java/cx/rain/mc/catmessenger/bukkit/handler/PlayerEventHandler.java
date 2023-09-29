@@ -2,9 +2,11 @@ package cx.rain.mc.catmessenger.bukkit.handler;
 
 import cx.rain.mc.catmessenger.bukkit.CatMessengerBukkit;
 import cx.rain.mc.catmessenger.bukkit.config.ConfigManager;
+import cx.rain.mc.catmessenger.bukkit.networking.payload.PlayerDeathPayload;
 import cx.rain.mc.catmessenger.bukkit.networking.payload.PlayerOnlinePayload;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -36,5 +38,11 @@ public class PlayerEventHandler implements Listener {
         var player = event.getPlayer();
         var name = player.getDisplayName();
         CatMessengerBukkit.getInstance().getConnectorClient().send(new PlayerOnlinePayload(false, name));
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        var pattern = event.getDeathMessage();
+        CatMessengerBukkit.getInstance().getConnectorClient().send(new PlayerDeathPayload(pattern, "", "", ""));
     }
 }

@@ -29,8 +29,7 @@ public abstract class MessagePayload {
             case SYSTEM -> payload = new SystemPayload(reader);
             case PLAYER_ONLINE -> payload = new PlayerOnlinePayload(reader);
             case SERVER_LIFECYCLE -> payload = new ServerLifecyclePayload(reader);
-            case PLAYER_DEATH -> {
-            }
+            case PLAYER_DEATH -> payload = new PlayerDeathPayload(reader);
             case PLAYER_ADVANCEMENT -> {
             }
             case QUERY_ONLINE -> {

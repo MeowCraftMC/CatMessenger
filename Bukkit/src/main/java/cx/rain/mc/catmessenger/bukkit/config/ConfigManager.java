@@ -59,4 +59,8 @@ public class ConfigManager {
     public String getFormatServerOffline() {
         return config.getString("formats.server_offline");
     }
+
+    public String getFormatPlayerDeath() {
+        return config.getString("formats.player_death");
+    }
 }
