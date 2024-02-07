@@ -3,6 +3,7 @@ package cx.rain.mc.catmessenger.common.message.serialization;
 import com.google.gson.JsonObject;
 import cx.rain.mc.catmessenger.common.message.IMessage;
 import cx.rain.mc.catmessenger.common.message.type.TextMessage;
+import cx.rain.mc.catmessenger.common.message.type.TranslatableMessage;
 
 public class MessageTypes {
 
@@ -12,6 +13,11 @@ public class MessageTypes {
         switch (type) {
             case "text" -> {
                 var message = new TextMessage();
+                message.readJson(json);
+                return message;
+            }
+            case "translatable" -> {
+                var message = new TranslatableMessage();
                 message.readJson(json);
                 return message;
             }

@@ -18,6 +18,8 @@ public class MessageSerializer implements IMessageSerializer<IMessage> {
 
     @Override
     public JsonElement serialize(IMessage src, Type typeOfSrc, JsonSerializationContext context) {
-        return src.writeJson();
+        var json = src.writeJson();
+        json.addProperty("type", src.getType());
+        return json;
     }
 }
