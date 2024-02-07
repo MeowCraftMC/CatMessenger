@@ -1,14 +1,14 @@
 package cx.rain.mc.catmessenger.common;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import cx.rain.mc.catmessenger.common.message.AbstractMessage;
+import cx.rain.mc.catmessenger.common.message.serialization.MessageSerializer;
+
 public class Constants {
-    public static final String CHANNEL_ID = "catmessenger:message";
-
-    public static final String CHANNEL_PLATFORM_TELEGRAM = "Telegram";
-    public static final String CHANNEL_PLATFORM_MINECRAFT_BUKKIT = "MinecraftBukkit";
-    public static final String CHANNEL_PLATFORM_MINECRAFT_BUNGEE = "MinecraftBungee";
-
-    public static final String PACKET_AUTHENTICATE = "Authenticate";
-    public static final String PACKET_REGISTER = "Register";
-    public static final String PACKET_PUBLISH = "Publish";
-    public static final String PACKET_FORWARD = "Forward";
+    public static final Gson GSON = new GsonBuilder()
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .registerTypeAdapter(AbstractMessage.class, MessageSerializer.INSTANCE)
+            .create();
 }
