@@ -6,4 +6,7 @@ group = "${rootProject.group}.common".toString()
 version = rootProject.version
 
 dependencies {
+    // https://mvnrepository.com/artifact/com.rabbitmq/amqp-client
+    implementation group: 'com.rabbitmq', name: 'amqp-client', version: '5.20.0'
+
 }

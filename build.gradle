@@ -52,25 +52,12 @@ subprojects {
 }
 
 dependencies {
-    implementation project(':Common')
-
-    // Todo: qyl27: Remove BungeeCord support now.
-//    implementation project(':Bungeecord')
-
-    implementation project(':Bukkit')
+    implementation project(':bungeecord')
+    implementation project(':bukkit')
 }
 
 jar.finalizedBy(shadowJar)
 
 shadowJar {
-    relocate 'com.google.gson', 'libs.com.google.gson'
-    relocate 'com.pengrad', 'libs.com.pengrad'
-    relocate 'org.intellij.lang.annotations', 'libs.org.intellij.lang.annotations'
-    relocate 'org.jetbrains.annotations', 'libs.org.jetbrains.annotations'
-    relocate 'kotlin', 'libs.kotlin'
-    relocate 'okhttp3', 'libs.okhttp3'
-    relocate 'okio', 'libs.okio'
-    relocate 'org.slf4j', 'libs.org.slf4j'
-    relocate 'org.java_websocket', 'libs.org.java_websocket'
-    relocate 'com.fasterxml.jackson', 'libs.com.fasterxml.jackson'
+
 }
