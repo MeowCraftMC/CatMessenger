@@ -11,7 +11,6 @@ public final class CatMessengerBungee extends Plugin {
     private final ConfigManager config;
     private final RabbitMQConnector connector;
 
-    @Deprecated
     public CatMessengerBungee() {
         INSTANCE = this;
 

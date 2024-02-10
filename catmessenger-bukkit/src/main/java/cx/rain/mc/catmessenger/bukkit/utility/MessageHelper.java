@@ -119,4 +119,10 @@ public class MessageHelper {
         extras.add(message3);
         return message;
     }
+
+    public static IMessage buildPlayerDeathMessage(String playerName, String deathMessage) {
+        var message = new TextMessage(deathMessage);
+        message.setColor(MessageColor.WHITE);
+        return message;
+    }
 }

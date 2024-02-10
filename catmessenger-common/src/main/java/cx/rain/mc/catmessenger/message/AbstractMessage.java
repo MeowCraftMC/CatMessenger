@@ -84,6 +84,12 @@ public abstract class AbstractMessage implements IMessage {
 
     // </editor-fold>
 
+    // <editor-fold desc="Interactable">
+
+
+
+    // </editor-fold>
+
     @Override
     public JsonObject writeJson() {
         var json = writeData();

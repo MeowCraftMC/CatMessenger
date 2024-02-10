@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'cx.rain.mc.catmessenger'
-version = '1.0.0'
+version = '2.0.0'
 
 allprojects {
     repositories {
@@ -54,6 +54,7 @@ subprojects {
 dependencies {
     implementation project(':catmessenger-bungeecord')
     implementation project(':catmessenger-bukkit')
+    implementation project(':catmessenger-velocity')
 }
 
 jar.finalizedBy(shadowJar)

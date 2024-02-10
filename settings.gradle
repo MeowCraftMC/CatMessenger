@@ -1,5 +1,6 @@
-rootProject.name = 'cat-messenger'
+rootProject.name = 'catmessenger'
 
 include ':catmessenger-common'
 include ':catmessenger-bungeecord'
 include ':catmessenger-bukkit'
+include ':catmessenger-velocity'
