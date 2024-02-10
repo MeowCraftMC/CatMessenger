@@ -1,5 +1,5 @@
 rootProject.name = 'cat-messenger'
 
-include ':common'
-include ':bungeecord'
-include ':bukkit'
+include ':catmessenger-common'
+include ':catmessenger-bungeecord'
+include ':catmessenger-bukkit'

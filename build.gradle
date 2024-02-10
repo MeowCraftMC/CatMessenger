@@ -52,8 +52,8 @@ subprojects {
 }
 
 dependencies {
-    implementation project(':bungeecord')
-    implementation project(':bukkit')
+    implementation project(':catmessenger-bungeecord')
+    implementation project(':catmessenger-bukkit')
 }
 
 jar.finalizedBy(shadowJar)
