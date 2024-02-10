@@ -36,7 +36,7 @@ public class MessageColor {
     }
 
     public String asString() {
-        return isHex() ? '#' + Integer.toString(hex) : name;
+        return isHex() ? '#' + Integer.toHexString(hex) : name;
     }
 
     public static MessageColor fromString(String str) {

@@ -1,4 +1,10 @@
-connector:
-  url: "ws://localhost:33927"
-  secret: "<Insert secret key here!>"
+name: 'ExampleBungee'
 
+# RabbitMQ connect info
+connector:
+  host: 'localhost'
+  port: 5672
+  virtualHost: '/minecraft'
+  username: 'guest'
+  password: 'guest'
+  maxRetry: 5

@@ -1,14 +1,13 @@
-server_name: "ExampleMinecraftServer"
-broadcast_system_message: true
-show_system_message: true
+name: 'ExampleMinecraftServer'
+
+# RabbitMQ connect info
 connector:
-  url: "ws://localhost:33927"
-  secret: "<Insert secret key here!>"
-formats:
-  raw: "[%1$s] %2$s"
-  chat_text: "[%1$s]<%2$s> %3$s"
-  system: "[系统][%1$s] %2$s"
-  player_online: "§e[%1$s] %2$s 加入了游戏"
-  player_offline: "§e[%1$s] %2$s 离开了游戏"
-  server_online: "§e服务器 [%1$s] 上线了"
-  server_offline: "§e服务器 [%1$s] 离线了"
+  host: 'localhost'
+  port: 5672
+  virtualHost: '/minecraft'
+  username: 'guest'
+  password: 'guest'
+  maxRetry: 5
+
+format:
+

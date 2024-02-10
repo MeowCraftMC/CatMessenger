@@ -11,7 +11,7 @@ public abstract class AbstractMessage implements IMessage {
 
     // <editor-fold desc="Decoration">
 
-    private MessageColor color = null;
+    private MessageColor color = MessageColor.RESET;
     private boolean bold = false;
     private boolean italic = false;
     private boolean underline = false;
@@ -72,10 +72,12 @@ public abstract class AbstractMessage implements IMessage {
 
     private final List<IMessage> extras = new ArrayList<>();
 
+    @Override
     public boolean hasExtra() {
         return !extras.isEmpty();
     }
 
+    @Override
     public List<IMessage> getExtras() {
         return extras;
     }

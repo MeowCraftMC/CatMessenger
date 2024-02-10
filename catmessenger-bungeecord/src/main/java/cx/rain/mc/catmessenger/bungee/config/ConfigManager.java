@@ -1,6 +1,6 @@
 package cx.rain.mc.catmessenger.bungee.config;
 
-import cx.rain.mc.catmessenger.bungee.MessengerBungee;
+import cx.rain.mc.catmessenger.bungee.CatMessengerBungee;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -8,17 +8,16 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.Proxy;
 import java.nio.file.Files;
 
 public class ConfigManager {
-    private final MessengerBungee plugin;
+    private final CatMessengerBungee plugin;
     private final Logger logger;
 
     private final File configFile;
     private final Configuration config;
 
-    public ConfigManager(MessengerBungee plugin) {
+    public ConfigManager(CatMessengerBungee plugin) {
         this.plugin = plugin;
 
         logger = plugin.getSLF4JLogger();
@@ -48,11 +47,31 @@ public class ConfigManager {
         }
     }
 
-    public String getRemoteConnector() {
-        return config.getString("connector.url");
+    public String getName() {
+        return config.getString("name");
     }
 
-    public String getConnectorSecret() {
-        return config.getString("connector.secret");
+    public String getConnectorHost() {
+        return config.getString("connector.host");
+    }
+
+    public int getConnectorPort() {
+        return config.getInt("connector.port");
+    }
+
+    public String getConnectorVirtualHost() {
+        return config.getString("connector.virtualHost");
+    }
+
+    public String getConnectorUsername() {
+        return config.getString("connector.username");
+    }
+
+    public String getConnectorPassword() {
+        return config.getString("connector.password");
+    }
+
+    public int getConnectorRetry() {
+        return config.getInt("connector.maxRetry");
     }
 }

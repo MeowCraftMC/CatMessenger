@@ -3,6 +3,7 @@ package cx.rain.mc.catmessenger.message.serialization;
 import com.google.gson.JsonObject;
 import cx.rain.mc.catmessenger.message.IMessage;
 import cx.rain.mc.catmessenger.message.type.EmptyMessage;
+import cx.rain.mc.catmessenger.message.type.NewlineMessage;
 import cx.rain.mc.catmessenger.message.type.TextMessage;
 import cx.rain.mc.catmessenger.message.type.TranslatableMessage;
 
@@ -14,6 +15,11 @@ public class MessageTypes {
         switch (type) {
             case "empty" -> {
                 var message = new EmptyMessage();
+                message.readJson(json);
+                return message;
+            }
+            case "newline" -> {
+                var message = new NewlineMessage();
                 message.readJson(json);
                 return message;
             }

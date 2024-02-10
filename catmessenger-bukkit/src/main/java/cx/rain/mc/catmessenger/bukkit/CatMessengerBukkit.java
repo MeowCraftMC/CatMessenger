@@ -3,23 +3,32 @@ package cx.rain.mc.catmessenger.bukkit;
 import cx.rain.mc.catmessenger.bukkit.config.ConfigManager;
 import cx.rain.mc.catmessenger.bukkit.handler.AsyncPlayerChatHandler;
 import cx.rain.mc.catmessenger.bukkit.handler.PlayerEventHandler;
-import cx.rain.mc.catmessenger.bukkit.networking.ConnectorClient;
-import cx.rain.mc.catmessenger.bukkit.networking.payload.ServerLifecyclePayload;
+import cx.rain.mc.catmessenger.bukkit.utility.MessageHelper;
+import cx.rain.mc.catmessenger.connector.RabbitMQConnector;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.net.URISyntaxException;
+import java.util.logging.Logger;
 
 public final class CatMessengerBukkit extends JavaPlugin {
     private static CatMessengerBukkit INSTANCE;
 
-    private final ConfigManager configManager;
-    private final ConnectorClient connectorClient;
+    private final Logger logger = getLogger();
+    private final ConfigManager config = new ConfigManager(this);
+    private final RabbitMQConnector connector;
 
-    public CatMessengerBukkit() throws URISyntaxException {
+    public CatMessengerBukkit() {
         INSTANCE = this;
 
-        configManager = new ConfigManager(this);
-        connectorClient = new ConnectorClient(this);
+        connector = new RabbitMQConnector(config.getName(), config.getConnectorRetry(),
+                config.getConnectorHost(), config.getConnectorPort(), config.getConnectorVirtualHost(),
+                config.getConnectorUsername(), config.getConnectorPassword());
+
+        connector.addHandler(((message, sender) -> Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
+            var component = MessageHelper.toBroadcast(sender, message);
+            Bukkit.spigot().broadcast(component);
+            logger.info(component.toPlainText());
+        })));
     }
 
     @Override
@@ -27,10 +36,10 @@ public final class CatMessengerBukkit extends JavaPlugin {
         // Plugin startup logic
         getLogger().info("Loading CatMessenger.");
 
-        connectorClient.connect();
-
         getServer().getPluginManager().registerEvents(new AsyncPlayerChatHandler(), this);
-        getServer().getPluginManager().registerEvents(new PlayerEventHandler(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerEventHandler(), this);
+
+        getConnector().publish(MessageHelper.buildServerOnlineMessage());
 
         getLogger().info("Loaded!");
     }
@@ -38,10 +47,9 @@ public final class CatMessengerBukkit extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        connectorClient.send(new ServerLifecyclePayload(false));
 
+        getConnector().publish(MessageHelper.buildServerOfflineMessage());
         getLogger().info("Bye~");
-        connectorClient.close();
     }
 
     public static CatMessengerBukkit getInstance() {
@@ -49,10 +57,10 @@ public final class CatMessengerBukkit extends JavaPlugin {
     }
 
     public ConfigManager getConfigManager() {
-        return configManager;
+        return config;
     }
 
-    public ConnectorClient getConnectorClient() {
-        return connectorClient;
+    public RabbitMQConnector getConnector() {
+        return connector;
     }
 }

@@ -1,7 +1,7 @@
 package cx.rain.mc.catmessenger.connector;
 
 import com.rabbitmq.client.*;
-import cx.rain.mc.catmessenger.common.CatMessenger;
+import cx.rain.mc.catmessenger.CatMessenger;
 import cx.rain.mc.catmessenger.message.IMessage;
 
 import java.io.IOException;
@@ -129,7 +129,7 @@ public class RabbitMQConnector {
         }
     }
 
-    public void addReceive(IMessageHandler handler) {
+    public void addHandler(IMessageHandler handler) {
         handlers.add(handler);
     }
 
