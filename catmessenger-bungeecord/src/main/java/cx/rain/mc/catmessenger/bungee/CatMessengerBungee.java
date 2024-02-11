@@ -23,6 +23,8 @@ public final class CatMessengerBungee extends Plugin {
 
     @Override
     public void onEnable() {
+        getConnector().connect();
+
         getConnector().publish(MessageHelper.buildServerOnlineMessage());
 
         getLogger().info("Loaded!");
@@ -31,6 +33,8 @@ public final class CatMessengerBungee extends Plugin {
     @Override
     public void onDisable() {
         getConnector().publish(MessageHelper.buildServerOfflineMessage());
+
+        getConnector().disconnect();
 
         getLogger().info("Bye~");
     }

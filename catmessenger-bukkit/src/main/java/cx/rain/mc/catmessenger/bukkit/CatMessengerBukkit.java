@@ -33,8 +33,9 @@ public final class CatMessengerBukkit extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
         getLogger().info("Loading CatMessenger.");
+
+        getConnector().connect();
 
         getServer().getPluginManager().registerEvents(new AsyncPlayerChatHandler(), this);
         getServer().getPluginManager().registerEvents(new PlayerEventHandler(), this);
@@ -46,9 +47,10 @@ public final class CatMessengerBukkit extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
-
         getConnector().publish(MessageHelper.buildServerOfflineMessage());
+
+        getConnector().disconnect();
+
         getLogger().info("Bye~");
     }
 

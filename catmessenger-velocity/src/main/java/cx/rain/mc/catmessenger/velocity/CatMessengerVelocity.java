@@ -43,6 +43,8 @@ public final class CatMessengerVelocity {
 
     @Subscribe
     public void onProxyInit(ProxyInitializeEvent event) {
+        getConnector().connect();
+
         getConnector().publish(MessageHelper.buildServerOnlineMessage());
 
         getLogger().info("Loaded!");
@@ -51,6 +53,8 @@ public final class CatMessengerVelocity {
     @Subscribe
     public void onProxyShutdown(ProxyShutdownEvent event) {
         getConnector().publish(MessageHelper.buildServerOfflineMessage());
+
+        getConnector().disconnect();
 
         getLogger().info("Bye~");
     }

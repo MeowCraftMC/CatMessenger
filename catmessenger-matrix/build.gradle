@@ -1,0 +1,18 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'java'
+}
+
+version = rootProject.version
+
+dependencies {
+    implementation 'com.cosium.matrix_communication_client:matrix-communication-client:1.9'
+    implementation 'org.spongepowered:configurate-yaml:4.1.2'
+
+    implementation project(':catmessenger-common')
+}
+
+jar.finalizedBy(shadowJar)
+
+shadowJar {
+}

@@ -1,7 +1,6 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'java'
-    id 'com.rikonardo.papermake' version '1.0.6'
 }
 
 group = 'cx.rain.mc.catmessenger'
@@ -58,7 +57,3 @@ dependencies {
 }
 
 jar.finalizedBy(shadowJar)
-
-shadowJar {
-
-}
