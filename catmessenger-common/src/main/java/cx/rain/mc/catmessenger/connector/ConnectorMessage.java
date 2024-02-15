@@ -1,24 +1,44 @@
 package cx.rain.mc.catmessenger.connector;
 
-import cx.rain.mc.catmessenger.message.IMessage;
+import cx.rain.mc.catmessenger.message.AbstractMessage;
+
+import java.time.ZonedDateTime;
 
 public class ConnectorMessage {
-    private IMessage message;
-    private String sender;
+    private String client;
+    private AbstractMessage content;
+    private AbstractMessage sender;
+    private ZonedDateTime time;
 
-    public void setMessage(IMessage message) {
-        this.message = message;
+    protected void setClient(String client) {
+        this.client = client;
     }
 
-    public IMessage getMessage() {
-        return message;
+    public String getClient() {
+        return client;
     }
 
-    public void setSender(String sender) {
+    public void setSender(AbstractMessage sender) {
         this.sender = sender;
     }
 
-    public String getSender() {
+    public AbstractMessage getSender() {
         return sender;
+    }
+
+    public void setContent(AbstractMessage content) {
+        this.content = content;
+    }
+
+    public AbstractMessage getContent() {
+        return content;
+    }
+
+    public void setTime(ZonedDateTime time) {
+        this.time = time;
+    }
+
+    public ZonedDateTime getTime() {
+        return time;
     }
 }

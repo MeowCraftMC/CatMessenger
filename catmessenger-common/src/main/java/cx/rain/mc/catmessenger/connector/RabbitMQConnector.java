@@ -2,10 +2,11 @@ package cx.rain.mc.catmessenger.connector;
 
 import com.rabbitmq.client.*;
 import cx.rain.mc.catmessenger.CatMessenger;
-import cx.rain.mc.catmessenger.message.IMessage;
+import cx.rain.mc.catmessenger.message.AbstractMessage;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -80,7 +81,7 @@ public class RabbitMQConnector {
 
                         for (var handler : handlers) {
                             try {
-                                handler.handle(message.getMessage(), message.getSender());
+                                handler.handle(message);
                             } catch (Exception ex) {
                                 ex.printStackTrace();
                             }
@@ -99,12 +100,30 @@ public class RabbitMQConnector {
         internalConnect();
     }
 
-    public void publish(IMessage message) {
-        var connectorMessage = new ConnectorMessage();
-        connectorMessage.setMessage(message);
-        connectorMessage.setSender(name);
+    public void publish(AbstractMessage message) {
+        publish(message, null);
+    }
 
-        var json = CatMessenger.GSON.toJson(connectorMessage);
+    public void publish(AbstractMessage message, ZonedDateTime time) {
+        publish(message, null, time);
+    }
+
+    public void publish(AbstractMessage message, AbstractMessage sender, ZonedDateTime time) {
+        var connectorMessage = new ConnectorMessage();
+        connectorMessage.setContent(message);
+        connectorMessage.setSender(sender);
+        connectorMessage.setTime(time);
+        publish(connectorMessage);
+    }
+
+    public void publish(ConnectorMessage message) {
+        message.setClient(name);
+
+        if (message.getTime() == null) {
+            message.setTime(ZonedDateTime.now());
+        }
+
+        var json = CatMessenger.GSON.toJson(message);
         internalPublish(json, 0);
     }
 

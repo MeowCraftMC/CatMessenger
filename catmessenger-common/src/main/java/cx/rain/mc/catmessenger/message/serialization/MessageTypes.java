@@ -1,7 +1,7 @@
 package cx.rain.mc.catmessenger.message.serialization;
 
 import com.google.gson.JsonObject;
-import cx.rain.mc.catmessenger.message.IMessage;
+import cx.rain.mc.catmessenger.message.AbstractMessage;
 import cx.rain.mc.catmessenger.message.type.EmptyMessage;
 import cx.rain.mc.catmessenger.message.type.NewlineMessage;
 import cx.rain.mc.catmessenger.message.type.TextMessage;
@@ -9,7 +9,7 @@ import cx.rain.mc.catmessenger.message.type.TranslatableMessage;
 
 public class MessageTypes {
 
-    public static IMessage tryJson(JsonObject json) {
+    public static AbstractMessage tryJson(JsonObject json) {
         var type = json.getAsJsonPrimitive("type").getAsString();
 
         switch (type) {

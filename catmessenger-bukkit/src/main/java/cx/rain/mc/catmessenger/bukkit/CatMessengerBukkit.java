@@ -24,11 +24,11 @@ public final class CatMessengerBukkit extends JavaPlugin {
                 config.getConnectorHost(), config.getConnectorPort(), config.getConnectorVirtualHost(),
                 config.getConnectorUsername(), config.getConnectorPassword());
 
-        connector.addHandler(((message, sender) -> Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
-            var component = MessageHelper.toBroadcast(sender, message);
+        connector.addHandler(message -> Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
+            var component = MessageHelper.toBroadcast(message);
             Bukkit.spigot().broadcast(component);
             logger.info(component.toPlainText());
-        })));
+        }));
     }
 
     @Override

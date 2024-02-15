@@ -7,7 +7,7 @@ import cx.rain.mc.catmessenger.message.serialization.MessageTypes;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractMessage implements IMessage {
+public abstract class AbstractMessage {
 
     // <editor-fold desc="Decoration">
 
@@ -70,15 +70,13 @@ public abstract class AbstractMessage implements IMessage {
 
     // <editor-fold desc="Extra">
 
-    private final List<IMessage> extras = new ArrayList<>();
+    private final List<AbstractMessage> extras = new ArrayList<>();
 
-    @Override
     public boolean hasExtra() {
         return !extras.isEmpty();
     }
 
-    @Override
-    public List<IMessage> getExtras() {
+    public List<AbstractMessage> getExtras() {
         return extras;
     }
 
@@ -86,11 +84,48 @@ public abstract class AbstractMessage implements IMessage {
 
     // <editor-fold desc="Interactable">
 
+    private AbstractMessage hoverMessage = null;
 
+    public boolean hasHoverMessage() {
+        return !isSpoiler() && hoverMessage != null;
+    }
+
+    public AbstractMessage getHoverMessage() {
+        return hoverMessage;
+    }
+
+    public void setHoverMessage(AbstractMessage hoverMessage) {
+//        if (isSpoiler()) {
+//            throw new IllegalStateException("Don't combine hover and spoiler.");
+//        }
+
+        this.hoverMessage = hoverMessage;
+    }
+
+    private ClickEvent clickEvent = null;
+    private String clickValue = null;
+
+    public boolean hasClickEvent() {
+        return clickEvent != null && clickValue != null;
+    }
+
+    public ClickEvent getClickEvent() {
+        return clickEvent;
+    }
+
+    public String getClickValue() {
+        return clickValue;
+    }
+
+    public void setClickEvent(ClickEvent clickEvent, String value) {
+        this.clickEvent = clickEvent;
+        this.clickValue = value;
+    }
 
     // </editor-fold>
 
-    @Override
+    // <editor-fold desc="Serialization">
+
     public JsonObject writeJson() {
         var json = writeData();
 
@@ -113,6 +148,14 @@ public abstract class AbstractMessage implements IMessage {
             json.addProperty("spoiler", true);
         }
 
+        if (hasHoverMessage()) {
+            json.add("hover", getHoverMessage().writeJson());
+        }
+        if (hasClickEvent()) {
+            json.addProperty("clickEvent", getClickEvent().getName());
+            json.addProperty("clickValue", getClickValue());
+        }
+
         if (hasExtra()) {
             var extras = new JsonArray();
             for (var extra : getExtras()) {
@@ -124,7 +167,6 @@ public abstract class AbstractMessage implements IMessage {
         return json;
     }
 
-    @Override
     public void readJson(JsonObject json) {
         readData(json);
 
@@ -146,6 +188,22 @@ public abstract class AbstractMessage implements IMessage {
         if (json.has("spoiler")) {
             setSpoiler(json.getAsJsonPrimitive("spoiler").getAsBoolean());
         }
+
+        if (json.has("hover") && !isSpoiler()) {
+            var hoverJson = json.getAsJsonObject("hover");
+            var hover = MessageTypes.tryJson(hoverJson);
+            setHoverMessage(hover);
+        }
+        if (json.has("clickEvent") && json.has("clickValue")) {
+            var eventStr = json.getAsJsonPrimitive("clickEvent").getAsString();
+            var value = json.getAsJsonPrimitive("clickValue").getAsString();
+
+            var event = ClickEvent.of(eventStr);
+            if (event != null) {
+                setClickEvent(event, value);
+            }
+        }
+
         if (json.has("extra")) {
             for (var extra : json.getAsJsonArray("extra")) {
                 if (extra instanceof JsonObject jsonObject) {
@@ -158,6 +216,14 @@ public abstract class AbstractMessage implements IMessage {
         }
     }
 
+    // </editor-fold>
+
+    // <editor-fold desc="Abstract methods">
+
     public abstract JsonObject writeData();
     public abstract void readData(JsonObject json);
+
+    public abstract String getType();
+
+    // </editor-fold>
 }
