@@ -144,7 +144,7 @@ public class MessageHelper {
     public static AbstractMessage buildJoinMessage(String playerName) {
         var message = new TextMessage(playerName);
         message.setColor(MessageColor.YELLOW);
-        var message2 = new TextMessage(" 加入了服务器");
+        var message2 = new TextMessage(" 登入了服务器");
         message2.setColor(MessageColor.YELLOW);
         message.getExtras().add(message2);
         return message;
@@ -166,7 +166,6 @@ public class MessageHelper {
         connectorMessage.setSender(sender);
 
         var message = new TextMessage(content);
-        message.getExtras().add(message);
         connectorMessage.setContent(message);
         return connectorMessage;
     }
