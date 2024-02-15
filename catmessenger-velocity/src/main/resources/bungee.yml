@@ -1,4 +1,0 @@
-name: CatMessenger
-version: '${version}'
-main: cx.rain.mc.catmessenger.bungee.CatMessengerBungee
-author: qyl27

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
@@ -62,9 +63,12 @@ public class RabbitMQConnector {
         connection = createConnection();
         channel = createChannel();
 
+        var queueArgs = new HashMap<String, Object>();
+        queueArgs.put("x-message-ttl", 60 * 1000);
+
         try {
-            channel.exchangeDeclare(EXCHANGE_NAME, EXCHANGE_TYPE, true, true, null);
-            channel.queueDeclare(QUEUE_NAME, true, false, true, null);
+            channel.exchangeDeclare(EXCHANGE_NAME, EXCHANGE_TYPE, true, false, null);
+            channel.queueDeclare(QUEUE_NAME, true, false, false, queueArgs);
             channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, ROUTING_KEY);
 
             {
@@ -77,7 +81,15 @@ public class RabbitMQConnector {
                         }
 
                         var str = new String(body, StandardCharsets.UTF_8);
+
+                        // Todo
+                        System.out.println(str);
+                        System.out.println(name);
                         var message = CatMessenger.GSON.fromJson(str, ConnectorMessage.class);
+
+                        if (message.getClient().equals(name)) {
+                            return;
+                        }
 
                         for (var handler : handlers) {
                             try {

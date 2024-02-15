@@ -5,6 +5,8 @@ import cx.rain.mc.catmessenger.bukkit.handler.AsyncPlayerChatHandler;
 import cx.rain.mc.catmessenger.bukkit.handler.PlayerEventHandler;
 import cx.rain.mc.catmessenger.bukkit.utility.MessageHelper;
 import cx.rain.mc.catmessenger.connector.RabbitMQConnector;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,8 +27,9 @@ public final class CatMessengerBukkit extends JavaPlugin {
                 config.getConnectorUsername(), config.getConnectorPassword());
 
         connector.addHandler(message -> Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
-            var component = MessageHelper.toBroadcast(message);
-            Bukkit.spigot().broadcast(component);
+            var components = MessageHelper.toBroadcast(message).toArray(BaseComponent[]::new);
+            Bukkit.spigot().broadcast(components);
+            var component = new ComponentBuilder().append(components).build();
             logger.info(component.toPlainText());
         }));
     }

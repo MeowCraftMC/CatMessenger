@@ -32,7 +32,7 @@ public class MessageColor {
     }
 
     public boolean isHex() {
-        return name != null;
+        return name == null;
     }
 
     public String asString() {

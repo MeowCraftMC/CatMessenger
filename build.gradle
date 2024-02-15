@@ -57,3 +57,12 @@ dependencies {
 }
 
 jar.finalizedBy(shadowJar)
+
+shadowJar {
+    dependencies {
+        exclude dependency('org.slf4j:slf4j-api')
+        exclude dependency('com.google.code.gson:gson')
+    }
+
+    relocate 'com.rabbitmq', 'cx.rain.mc.catmessenger.libs.com.rabbitmq'
+}

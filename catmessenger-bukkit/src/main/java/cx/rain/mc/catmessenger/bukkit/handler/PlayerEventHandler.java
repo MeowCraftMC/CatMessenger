@@ -35,9 +35,15 @@ public class PlayerEventHandler implements Listener {
         var player = event.getPlayer();
         var name = player.getDisplayName();
         var advancement = event.getAdvancement();
-        var title = advancement.getDisplay().getTitle();
-        var description = advancement.getDisplay().getDescription();
-        var type = advancement.getDisplay().getType();
+        var display = advancement.getDisplay();
+
+        if (display == null) {
+            return;
+        }
+
+        var title = display.getTitle();
+        var description = display.getDescription();
+        var type = display.getType();
 
         CatMessengerBukkit.getInstance().getConnector().publish(MessageHelper
                 .buildAdvancementMessage(name, title, description, type));

@@ -129,6 +129,8 @@ public abstract class AbstractMessage {
     public JsonObject writeJson() {
         var json = writeData();
 
+        json.addProperty("type", getType());
+
         if (getColor() != null) {
             json.addProperty("color", getColor().asString());
         }

@@ -15,12 +15,13 @@ import org.bukkit.advancement.AdvancementDisplayType;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public class MessageHelper {
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public static BaseComponent toBroadcast(ConnectorMessage message) {
+    public static List<BaseComponent> toBroadcast(ConnectorMessage message) {
         var result = new TextComponent("[" + message.getClient() + "] ");
         result.setColor(ChatColor.GREEN);
         result.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
@@ -37,11 +38,9 @@ public class MessageHelper {
             result23.setColor(ChatColor.YELLOW);
             result2.addExtra(result23);
         }
-        result.addExtra(result2);
 
         var result3 = toComponent(message.getContent());
-        result.addExtra(result3);
-        return result;
+        return List.of(result, result2, result3);
     }
 
     private static BaseComponent toComponent(AbstractMessage message) {
@@ -57,7 +56,10 @@ public class MessageHelper {
         component.setStrikethrough(message.isStrikethrough());
         component.setObfuscated(message.isSpoiler());
 
-        component.setColor(ChatColor.of(message.getColor().asString()));
+        var color = ChatColor.of(message.getColor().asString());
+        if (color != ChatColor.RESET) {
+            component.setColor(color);
+        }
 
         if (message.hasHoverMessage()) {
             component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
@@ -91,7 +93,7 @@ public class MessageHelper {
 
         var component = message;
 
-        if (component.getExtra().isEmpty()) {
+        if (component.getExtra() == null || component.getExtra().isEmpty()) {
             list.add(component);
             return list;
         }
@@ -129,14 +131,12 @@ public class MessageHelper {
 
     public static AbstractMessage buildServerOnlineMessage() {
         var message = new TextMessage("服务器上线了");
-        message.setBold(true);
         message.setColor(MessageColor.YELLOW);
         return message;
     }
 
     public static AbstractMessage buildServerOfflineMessage() {
         var message = new TextMessage("服务器离线了");
-        message.setBold(true);
         message.setColor(MessageColor.YELLOW);
         return message;
     }
