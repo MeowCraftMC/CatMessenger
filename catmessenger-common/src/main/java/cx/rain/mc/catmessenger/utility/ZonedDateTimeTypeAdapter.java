@@ -6,9 +6,11 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 
 public class ZonedDateTimeTypeAdapter extends TypeAdapter<ZonedDateTime> {
+
     public static final ZonedDateTimeTypeAdapter INSTANCE = new ZonedDateTimeTypeAdapter();
 
     @Override
@@ -17,7 +19,7 @@ public class ZonedDateTimeTypeAdapter extends TypeAdapter<ZonedDateTime> {
             out.nullValue();
             return;
         }
-        out.value(value.toString());
+        out.value(value.toOffsetDateTime().toString());
     }
 
     @Override
@@ -26,6 +28,6 @@ public class ZonedDateTimeTypeAdapter extends TypeAdapter<ZonedDateTime> {
             in.nextNull();
             return null;
         }
-        return ZonedDateTime.parse(in.nextString());
+        return OffsetDateTime.parse(in.nextString()).toZonedDateTime();
     }
 }
