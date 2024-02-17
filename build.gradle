@@ -1,6 +1,9 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'java'
+    id 'com.rikonardo.papermake' version '1.0.6'
+    id 'xyz.jpenilla.run-velocity' version '2.2.2'
+    id 'xyz.jpenilla.run-waterfall' version '2.2.2'
 }
 
 group = 'cx.rain.mc.catmessenger'
@@ -65,4 +68,12 @@ shadowJar {
     }
 
     relocate 'com.rabbitmq', 'cx.rain.mc.catmessenger.libs.com.rabbitmq'
+}
+
+runVelocity {
+    velocityVersion '3.3.0-SNAPSHOT'
+}
+
+runWaterfall {
+    waterfallVersion '1.20'
 }

@@ -15,7 +15,6 @@ import java.util.concurrent.TimeoutException;
 public class RabbitMQConnector {
     public static final String EXCHANGE_NAME = "catmessenger";
     public static final String EXCHANGE_TYPE = "fanout";
-    public static final String QUEUE_NAME = "messages";
     public static final String ROUTING_KEY = "";
 
     private final ConnectionFactory factory;
@@ -25,6 +24,8 @@ public class RabbitMQConnector {
 
     private Connection connection;
     private Channel channel;
+
+    private String queueName;
 
     private boolean isClosing = false;
 
@@ -63,13 +64,15 @@ public class RabbitMQConnector {
         connection = createConnection();
         channel = createChannel();
 
-        var queueArgs = new HashMap<String, Object>();
-        queueArgs.put("x-message-ttl", 60 * 1000);
+        var messageArgs = new HashMap<String, Object>();
+        messageArgs.put("x-message-ttl", 60 * 1000);
 
         try {
-            channel.exchangeDeclare(EXCHANGE_NAME, EXCHANGE_TYPE, true, false, null);
-            channel.queueDeclare(QUEUE_NAME, true, false, false, queueArgs);
-            channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, ROUTING_KEY);
+            channel.basicQos(1);
+
+            channel.exchangeDeclare(EXCHANGE_NAME, EXCHANGE_TYPE, true, false, messageArgs);
+            queueName = channel.queueDeclare().getQueue();
+            channel.queueBind(queueName, EXCHANGE_NAME, ROUTING_KEY);
 
             {
                 Consumer consumer = new DefaultConsumer(channel) {
@@ -82,9 +85,7 @@ public class RabbitMQConnector {
 
                         var str = new String(body, StandardCharsets.UTF_8);
 
-                        // Todo
-                        System.out.println(str);
-                        System.out.println(name);
+//                        System.out.println(str);
                         var message = CatMessenger.GSON.fromJson(str, ConnectorMessage.class);
 
                         if (message.getClient().equals(name)) {
@@ -101,7 +102,7 @@ public class RabbitMQConnector {
                     }
                 };
 
-                channel.basicConsume(QUEUE_NAME, true, consumer);
+                channel.basicConsume(queueName, true, consumer);
             }
         } catch (IOException ex) {
             throw new RuntimeException(ex);
@@ -140,6 +141,8 @@ public class RabbitMQConnector {
     }
 
     private void internalPublish(String message, int retry) {
+//        System.out.println(message);
+
         try {
             if (isClosing) {
                 return;
@@ -154,7 +157,7 @@ public class RabbitMQConnector {
                 internalConnect();
             }
 
-            channel.basicPublish(EXCHANGE_NAME, QUEUE_NAME, null, message.getBytes(StandardCharsets.UTF_8));
+            channel.basicPublish(EXCHANGE_NAME, queueName, null, message.getBytes(StandardCharsets.UTF_8));
         } catch (IOException ex) {
             internalPublish(message, retry + 1);
         }

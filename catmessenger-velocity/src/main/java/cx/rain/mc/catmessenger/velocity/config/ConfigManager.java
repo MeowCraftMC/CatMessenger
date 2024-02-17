@@ -7,6 +7,7 @@ import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.HashMap;
 
 public class ConfigManager {
     private final Logger logger;
@@ -22,7 +23,7 @@ public class ConfigManager {
         var file = new File(dataDir.toFile(), "catmessenger.conf");
 
         config = HoconConfigurationLoader.builder()
-                .file(file)
+                .path(file.toPath())
                 .emitComments(true)
                 .prettyPrinting(true)
                 .build();
@@ -41,31 +42,23 @@ public class ConfigManager {
     private void saveDefault() throws ConfigurateException {
         var root = config.createNode();
         root.commentIfAbsent("Config of CatMessenger.");
-        var name = config.createNode();
-        root.childrenMap().put("name", name);
+        var name = root.node("name");
         name.commentIfAbsent("Server name.");
         name.set("ExampleVelocityServer");
-        var connector = config.createNode();
-        root.childrenMap().put("connector", connector);
+        var connector = root.node("connector");
         connector.commentIfAbsent("RabbitMQ connection info.");
-        var connectorHost = config.createNode();
-        var connectorPort = config.createNode();
-        var connectorVirtualHost = config.createNode();
-        var connectorUsername = config.createNode();
-        var connectorPassword = config.createNode();
-        var connectorRetry = config.createNode();
+        var connectorHost = connector.node("host");
+        var connectorPort = connector.node("port");
+        var connectorVirtualHost = connector.node("virtualHost");
+        var connectorUsername = connector.node("username");
+        var connectorPassword = connector.node("password");
+        var connectorRetry = connector.node("maxRetry");
         connectorHost.set("localhost");
         connectorPort.set(5672);
         connectorVirtualHost.set("/minecraft");
         connectorUsername.set("guest");
         connectorPassword.set("guest");
         connectorRetry.set(5);
-        connector.childrenMap().put("host", connectorHost);
-        connector.childrenMap().put("port", connectorPort);
-        connector.childrenMap().put("virtualHost", connectorVirtualHost);
-        connector.childrenMap().put("username", connectorUsername);
-        connector.childrenMap().put("password", connectorPassword);
-        connector.childrenMap().put("maxRetry", connectorRetry);
 
         config.save(root);
     }

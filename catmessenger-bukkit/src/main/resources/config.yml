@@ -8,6 +8,3 @@ connector:
   username: 'guest'
   password: 'guest'
   maxRetry: 5
-
-format:
-
