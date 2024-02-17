@@ -157,7 +157,7 @@ public class RabbitMQConnector {
                 internalConnect();
             }
 
-            channel.basicPublish(EXCHANGE_NAME, queueName, null, message.getBytes(StandardCharsets.UTF_8));
+            channel.basicPublish(EXCHANGE_NAME, ROUTING_KEY, null, message.getBytes(StandardCharsets.UTF_8));
         } catch (IOException ex) {
             internalPublish(message, retry + 1);
         }

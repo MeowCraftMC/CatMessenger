@@ -45,11 +45,14 @@ public class TranslatableMessage extends AbstractMessage {
         var json = new JsonObject();
         json.addProperty("key", getKey());
 
-        var args = new JsonArray();
-        for (var arg : getArgs()) {
-            args.add(arg);
+        if (!getArgs().isEmpty()) {
+            var args = new JsonArray();
+            for (var arg : getArgs()) {
+                args.add(arg);
+            }
+            json.add("args", args);
         }
-        json.add("args", args);
+
         return json;
     }
 
@@ -58,6 +61,11 @@ public class TranslatableMessage extends AbstractMessage {
         setKey(json.get("key").getAsString());
 
         var args = json.getAsJsonArray("args");
+
+        if (args == null || args.isEmpty()) {
+            return;
+        }
+
         for (var arg : args) {
             addArg(arg.getAsString());
         }
