@@ -29,7 +29,7 @@ public final class CatMessengerBukkit extends JavaPlugin {
         connector.addHandler(message -> Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
             var components = MessageHelper.toBroadcast(message).toArray(BaseComponent[]::new);
             Bukkit.spigot().broadcast(components);
-            var component = new ComponentBuilder().append(components).build();
+            var component = new ComponentBuilder().append(components).getCurrentComponent();
             logger.info(component.toPlainText());
         }));
     }

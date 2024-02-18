@@ -15,7 +15,6 @@ import org.bukkit.advancement.AdvancementDisplayType;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 public class MessageHelper {
@@ -63,10 +62,9 @@ public class MessageHelper {
 
         if (message.hasHoverMessage()) {
             component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                    toMultiLineComponent(toComponent(message.getHoverMessage()))
+                    new Text(toMultiLineComponent(toComponent(message.getHoverMessage()))
                             .stream()
-                            .map(Text::new)
-                            .toArray(Text[]::new)));
+                            .toArray(BaseComponent[]::new))));
         }
 
         if (message.hasClickEvent()) {
