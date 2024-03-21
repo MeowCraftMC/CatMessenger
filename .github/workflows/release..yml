@@ -45,16 +45,3 @@ jobs:
         asset_path: ./build/libs/catmessenger-2.0.0-all.jar  # Update this path
         asset_name: catmessenger-2.0.0-all.jar  # Update this
         asset_content_type: application/java-archive
-
-    - name: Archive Code
-      run: git archive --format=zip --output=./build/code-${{ github.ref }}.zip HEAD
-
-    - name: Upload Archived Code as Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./build/code-${{ github.ref }}.zip
-        asset_name: code-${{ github.ref }}.zip
-        asset_content_type: application/zip
