@@ -45,4 +45,4 @@ services:
 2. 上传到服务器`plugins`文件夹。
 3. 启动服务器，会自动创建一个默认的配置文件。
 针对配置文件的配置，必须和上面rabbitMQ docker配置一一对应。
-4. 跳转到(Adapter项目)[https://github.com/MeowCraftMC/CatMessenger-Adapter]以继续教程。
+4. 跳转到 [Adapter项目](https://github.com/MeowCraftMC/CatMessenger-Adapter) 以继续教程。
