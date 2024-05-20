@@ -11,9 +11,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerEventHandler implements Listener {
 
-    public PlayerEventHandler() {
-    }
-
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         var player = event.getPlayer();

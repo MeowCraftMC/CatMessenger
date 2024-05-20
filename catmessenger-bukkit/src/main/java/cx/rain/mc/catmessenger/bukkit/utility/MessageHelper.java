@@ -159,13 +159,34 @@ public class MessageHelper {
         return message;
     }
 
-    public static ConnectorMessage buildChatMessage(String playerName, UUID uuid, String content) {
+    public static ConnectorMessage buildChatMessage(String playerName, UUID uuid, BaseComponent content) {
         var connectorMessage = new ConnectorMessage();
         var sender = new TextMessage(playerName);
         sender.setHoverMessage(new TextMessage(uuid.toString()));
         connectorMessage.setSender(sender);
 
-        var message = new TextMessage(content);
+        var message = new EmptyMessage();
+
+        var list = new ArrayList<BaseComponent>();
+        list.add(content);
+        while (!list.isEmpty()) {
+            var component = list.get(0);
+            if (!component.getExtra().isEmpty()) {
+                list.addAll(component.getExtra());
+            }
+
+            var text = new TextMessage(component.toPlainText());
+            text.setColor(MessageColor.fromString(component.getColor().toString()));
+            text.setBold(component.isBold());
+            text.setItalic(component.isItalic());
+            text.setStrikethrough(component.isStrikethrough());
+            text.setUnderline(component.isUnderlined());
+            text.setSpoiler(component.isObfuscated());
+
+            message.getExtras().add(text);
+            list.remove(0);
+        }
+
         connectorMessage.setContent(message);
         return connectorMessage;
     }
