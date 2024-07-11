@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "基于 RabbitMQ 的多 MC 服务器和 Telegram 群的消息互通软件，同样支持在MC服务器之间混合传递。",
+  "authors": [
+    "qyl27"
+  ],
+  "contact": {
+    "homepage": "https://github.com/MeowCraftMC/CatMessenger",
+    "sources": "https://github.com/MeowCraftMC/CatMessenger",
+    "issues": "https://github.com/MeowCraftMC/CatMessenger/issues"
+  },
+  "license": "Apache-2.0",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "cx.rain.mc.catmessenger.fabric.CatMessengerFabric"
+    ]
+  },
+  "depends": {
+    "minecraft": ">=${minecraft_version}",
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric": "*",
+    "architectury": ">=${architectury_api_version}"
+  }
+}

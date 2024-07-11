@@ -15,12 +15,3 @@ shadowJar {
 
     relocate 'com.rabbitmq', 'cx.rain.mc.catmessenger.libs.com.rabbitmq'
 }
-
-publishing {
-    publications {
-        mavenFabric(MavenPublication) {
-            artifactId = project.name
-            from components.java
-        }
-    }
-}
