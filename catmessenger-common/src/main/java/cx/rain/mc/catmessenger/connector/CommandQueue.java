@@ -11,12 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
-public class MessageQueue {
-
-    public static final String EXCHANGE_NAME = "catmessenger";
-    public static final String EXCHANGE_TYPE = "fanout";
-    public static final String ROUTING_KEY = "";
-
+public class CommandQueue {
     private final String name;
     private final Connection connection;
     private final int maxRetryCount;
@@ -25,10 +20,10 @@ public class MessageQueue {
     private String queueName;
     private boolean isClosing = false;
 
-    private final List<IMessageHandler> handlers = new ArrayList<>();
+    private final List<ICommandHandler> handlers = new ArrayList<>();
 
-    public MessageQueue(String clientName, Connection connection, int maxRetryCount) {
-        this.name = clientName;
+    public CommandQueue(String clientName, Connection connection, int maxRetryCount) {
+        this.name = clientName + "_command";
         this.connection = connection;
         this.maxRetryCount = maxRetryCount;
     }
@@ -37,14 +32,7 @@ public class MessageQueue {
         try {
             channel = connection.createChannel();
 
-            var messageArgs = new HashMap<String, Object>();
-            messageArgs.put("x-message-ttl", 60 * 1000);
-
-            channel.basicQos(1);
-
-            channel.exchangeDeclare(EXCHANGE_NAME, EXCHANGE_TYPE, true, false, messageArgs);
             queueName = channel.queueDeclare(name, false, true, true, null).getQueue();
-            channel.queueBind(queueName, EXCHANGE_NAME, ROUTING_KEY);
 
             {
                 Consumer consumer = new DefaultConsumer(channel) {
@@ -56,42 +44,35 @@ public class MessageQueue {
                         }
 
                         var str = new String(body, StandardCharsets.UTF_8);
+                        var message = CatMessenger.GSON.fromJson(str, ConnectorCommand.class);
 
-                        var message = CatMessenger.GSON.fromJson(str, ConnectorMessage.class);
-
-                        if (message.getClient().equals(name)) {
-                            return;
-                        }
-
-                        for (var handler : handlers) {
-                            try {
-                                handler.handle(message);
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
+                        try {
+                            for (var handler : handlers) {
+                                try {
+                                    handler.handle(message, properties);
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                }
                             }
+                        } finally {
+                            channel.basicAck(envelope.getDeliveryTag(), false);
                         }
                     }
                 };
 
-                channel.basicConsume(queueName, true, consumer);
+                channel.basicConsume(queueName, false, consumer);
             }
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    public void publish(ConnectorMessage message) {
-        message.setClient(name);
-
-        if (message.getTime() == null) {
-            message.setTime(ZonedDateTime.now());
-        }
-
-        var json = CatMessenger.GSON.toJson(message);
-        internalPublish(json, 0);
+    public void publish(ConnectorCommand command) {
+        var json = CatMessenger.GSON.toJson(command);
+        internalPublish(command.getCallback() + "_command", json, 0);
     }
 
-    private void internalPublish(String message, int retry) {
+    private void internalPublish(String callback, String message, int retry) {
         try {
             if (isClosing) {
                 return;
@@ -106,13 +87,13 @@ public class MessageQueue {
                 connect();
             }
 
-            channel.basicPublish(EXCHANGE_NAME, ROUTING_KEY, null, message.getBytes(StandardCharsets.UTF_8));
+            channel.basicPublish("", callback, null, message.getBytes(StandardCharsets.UTF_8));
         } catch (IOException ex) {
-            internalPublish(message, retry + 1);
+            internalPublish(callback, message, retry + 1);
         }
     }
 
-    public void addHandler(IMessageHandler handler) {
+    public void addHandler(ICommandHandler handler) {
         handlers.add(handler);
     }
 

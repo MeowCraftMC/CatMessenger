@@ -17,8 +17,9 @@ public class RabbitMQConnector {
     private final ConnectionFactory factory;
     private final String name;
 
-    private Connection connection;
-    private MessageQueue messageQueue;
+    private final Connection connection;
+    private final MessageQueue messageQueue;
+    private final CommandQueue commandQueue;
 
     public RabbitMQConnector(String name, int maxRetryCount, String host, int port, String virtualHost, String username, String password) {
         this.name = name;
@@ -32,6 +33,7 @@ public class RabbitMQConnector {
 
         connection = createConnection();
         messageQueue = new MessageQueue(name, connection, maxRetryCount);
+        commandQueue = new CommandQueue(name, connection, maxRetryCount);
     }
 
     private Connection createConnection() {
@@ -44,6 +46,25 @@ public class RabbitMQConnector {
 
     public void connect() {
         messageQueue.connect();
+        commandQueue.connect();
+    }
+
+    public void disconnect() {
+        messageQueue.disconnect();
+        commandQueue.disconnect();
+        try {
+            connection.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public MessageQueue getMessageQueue() {
+        return messageQueue;
+    }
+
+    public CommandQueue getCommandQueue() {
+        return commandQueue;
     }
 
     public void publish(AbstractMessage message) {
@@ -66,11 +87,7 @@ public class RabbitMQConnector {
         messageQueue.publish(message);
     }
 
-    public void disconnect() {
-        messageQueue.disconnect();
-    }
-
-    public MessageQueue getMessageQueue() {
-        return messageQueue;
+    public void publish(ConnectorCommand command) {
+        commandQueue.publish(command);
     }
 }
