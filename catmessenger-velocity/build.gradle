@@ -1,12 +1,16 @@
 plugins {
-    id 'java'
+    id 'xyz.jpenilla.run-velocity' version "${run_task_plugin_version}"
 }
 
 version = rootProject.version
 
 dependencies {
-    compileOnly 'com.velocitypowered:velocity-api:3.3.0-SNAPSHOT'
-    annotationProcessor 'com.velocitypowered:velocity-api:3.3.0-SNAPSHOT'
+    compileOnly "com.velocitypowered:velocity-api:${velocity_api_version}"
+    annotationProcessor "com.velocitypowered:velocity-api:${velocity_api_version}"
 
-    implementation project(':catmessenger-common')
+    implementation project(path: ':catmessenger-common', configuration: 'shadow')
+}
+
+runVelocity {
+    velocityVersion velocity_runtime_version
 }

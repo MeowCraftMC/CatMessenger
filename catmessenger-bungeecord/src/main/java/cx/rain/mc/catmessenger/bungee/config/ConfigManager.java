@@ -4,11 +4,12 @@ import cx.rain.mc.catmessenger.bungee.CatMessengerBungee;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
-import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ConfigManager {
     private final CatMessengerBungee plugin;
@@ -20,7 +21,7 @@ public class ConfigManager {
     public ConfigManager(CatMessengerBungee plugin) {
         this.plugin = plugin;
 
-        logger = plugin.getSLF4JLogger();
+        logger = plugin.getLogger();
 
         configFile = new File(plugin.getDataFolder(), "config.yml");
         saveDefault();
@@ -28,7 +29,7 @@ public class ConfigManager {
         try {
             config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
         } catch (IOException ex) {
-            logger.warn("Cannot read configuration file.", ex);
+            logger.log(Level.WARNING, "Cannot read configuration file.", ex);
             throw new RuntimeException(ex);
         }
     }
@@ -42,7 +43,7 @@ public class ConfigManager {
             try (var is = plugin.getResourceAsStream("config.yml")) {
                 Files.copy(is, configFile.toPath());
             } catch (IOException ex) {
-                logger.warn("Cannot create default configuration file.", ex);
+                logger.log(Level.WARNING, "Cannot create default configuration file.", ex);
             }
         }
     }

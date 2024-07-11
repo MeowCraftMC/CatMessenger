@@ -1,13 +1,13 @@
 plugins {
-    id 'java'
+    id 'xyz.jpenilla.run-paper' version "${run_task_plugin_version}"
 }
 
 version = rootProject.version
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT'
+    compileOnly "org.spigotmc:spigot-api:${spigot_api_version}"
 
-    implementation project(':catmessenger-common')
+    implementation project(path: ':catmessenger-common', configuration: 'shadow')
 }
 
 processResources {
@@ -17,4 +17,8 @@ processResources {
     filesMatching('plugin.yml') {
         expand props
     }
+}
+
+runServer {
+    minecraftVersion paper_server_runtime_version
 }

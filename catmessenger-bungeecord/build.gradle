@@ -1,13 +1,13 @@
 plugins {
-    id 'java'
+    id 'xyz.jpenilla.run-waterfall' version "${run_task_plugin_version}"
 }
 
 version = rootProject.version
 
 dependencies {
-    compileOnly 'io.github.waterfallmc:waterfall-api:1.20-R0.1-SNAPSHOT'
+    compileOnly "io.github.waterfallmc:waterfall-api:${waterfall_api_version}"
 
-    implementation project(':catmessenger-common')
+    implementation project(path: ':catmessenger-common', configuration: 'shadow')
 }
 
 processResources {
@@ -17,4 +17,8 @@ processResources {
     filesMatching('bungee.yml') {
         expand props
     }
+}
+
+runWaterfall {
+    waterfallVersion waterfall_runtime_version
 }

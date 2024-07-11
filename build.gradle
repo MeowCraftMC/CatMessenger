@@ -1,15 +1,20 @@
 plugins {
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'java'
-    id 'com.rikonardo.papermake' version '1.0.6'
-    id 'xyz.jpenilla.run-velocity' version '2.2.2'
-    id 'xyz.jpenilla.run-waterfall' version '2.2.2'
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version "${shadow_plugin_version}" apply false
+    id 'xyz.jpenilla.run-paper' version "${run_task_plugin_version}" apply false
+    id 'xyz.jpenilla.run-waterfall' version "${run_task_plugin_version}" apply false
+    id 'xyz.jpenilla.run-velocity' version "${run_task_plugin_version}" apply false
 }
 
-group = 'cx.rain.mc.catmessenger'
-version = '2.1.0'
+def ENV = System.getenv()
 
 allprojects {
+    apply plugin: 'maven-publish'
+
+    group = project_group
+    version = project_version
+
     repositories {
         maven {
             name = 'PaperMC'
@@ -33,47 +38,49 @@ allprojects {
 
         mavenCentral()
     }
+
+    publishing {
+        repositories {
+            mavenLocal()
+
+            maven {
+                name = 'YuluoMaven'
+
+                def releaseUrl = 'https://maven.yuluo.dev/repository/maven-releases/'
+                def snapshotUrl = 'https://maven.yuluo.dev/repository/maven-snapshots/'
+                url = ENV.MOD_RELEASE ? releaseUrl : snapshotUrl
+
+                credentials {
+                    username ENV.MOD_MAVEN_USER
+                    password ENV.MOD_MAVEN_PASS
+                }
+            }
+        }
+    }
 }
 
 subprojects {
-    def targetJavaVersion = 17
+    apply plugin: 'java'
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    jar.finalizedBy(shadowJar)
+
     java {
-        def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-        sourceCompatibility = javaVersion
-        targetCompatibility = javaVersion
-        if (JavaVersion.current() < javaVersion) {
-            toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-        }
+        sourceCompatibility = JavaVersion.toVersion(project.target_java_version)
+        targetCompatibility = JavaVersion.toVersion(project.target_java_version)
+        toolchain.languageVersion = JavaLanguageVersion.of(project.target_java_version)
+
+        withSourcesJar()
     }
 
     tasks.withType(JavaCompile).configureEach {
-        if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-            options.release = targetJavaVersion
+        options.encoding = 'UTF-8'
+        options.release = Integer.parseInt(project.target_java_version)
+    }
+
+    components.java {
+        withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+            skip()
         }
     }
-}
-
-dependencies {
-    implementation project(':catmessenger-bungeecord')
-    implementation project(':catmessenger-bukkit')
-    implementation project(':catmessenger-velocity')
-}
-
-jar.finalizedBy(shadowJar)
-
-shadowJar {
-    dependencies {
-        exclude dependency('org.slf4j:slf4j-api')
-        exclude dependency('com.google.code.gson:gson')
-    }
-
-    relocate 'com.rabbitmq', 'cx.rain.mc.catmessenger.libs.com.rabbitmq'
-}
-
-runVelocity {
-    velocityVersion '3.3.0-SNAPSHOT'
-}
-
-runWaterfall {
-    waterfallVersion '1.20'
 }
