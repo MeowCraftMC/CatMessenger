@@ -171,7 +171,7 @@ public class MessageHelper {
         list.add(content);
         while (!list.isEmpty()) {
             var component = list.get(0);
-            if (!component.getExtra().isEmpty()) {
+            if (component.getExtra() != null && !component.getExtra().isEmpty()) {
                 list.addAll(component.getExtra());
             }
 
