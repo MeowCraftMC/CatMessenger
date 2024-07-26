@@ -13,10 +13,7 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.advancement.AdvancementDisplayType;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 
 public class MessageHelper {
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -167,10 +164,10 @@ public class MessageHelper {
 
         var message = new EmptyMessage();
 
-        var list = new ArrayList<BaseComponent>();
-        list.add(content);
+        var list = new ArrayDeque<BaseComponent>();
+        list.push(content);
         while (!list.isEmpty()) {
-            var component = list.get(0);
+            var component = list.pop();
             if (component.getExtra() != null && !component.getExtra().isEmpty()) {
                 list.addAll(component.getExtra());
             }
@@ -184,7 +181,6 @@ public class MessageHelper {
             text.setSpoiler(component.isObfuscated());
 
             message.getExtras().add(text);
-            list.remove(0);
         }
 
         connectorMessage.setContent(message);
