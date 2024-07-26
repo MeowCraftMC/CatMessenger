@@ -13,7 +13,8 @@ public class AsyncPlayerChatHandler implements Listener {
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
         var player = event.getPlayer();
         var name = player.getDisplayName();
-        var content = TextComponent.fromLegacy(event.getMessage());
+//        var content = TextComponent.fromLegacy(event.getMessage());
+        var content = event.getMessage();
 
         CatMessengerBukkit.getInstance().getConnector().publish(
                 MessageHelper.buildChatMessage(name, player.getUniqueId(), content));

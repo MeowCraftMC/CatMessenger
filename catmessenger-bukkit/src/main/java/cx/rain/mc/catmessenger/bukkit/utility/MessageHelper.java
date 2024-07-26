@@ -156,6 +156,16 @@ public class MessageHelper {
         return message;
     }
 
+    public static ConnectorMessage buildChatMessage(String playerName, UUID uuid, String content) {
+        var connectorMessage = new ConnectorMessage();
+        var sender = new TextMessage(playerName);
+        sender.setHoverMessage(new TextMessage(uuid.toString()));
+        connectorMessage.setSender(sender);
+        var message = new TextMessage(content);
+        connectorMessage.setContent(message);
+        return connectorMessage;
+    }
+
     public static ConnectorMessage buildChatMessage(String playerName, UUID uuid, BaseComponent content) {
         var connectorMessage = new ConnectorMessage();
         var sender = new TextMessage(playerName);
