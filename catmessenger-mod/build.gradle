@@ -30,7 +30,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "dev.architectury:architectury:${architectury_api_version}"
 
-    implementation project(path: ':catmessenger-common', configuration: 'shadow')
+    implementation(project(path: ':catmessenger-common', configuration: 'shadow'))
     shadowBundle project(path: ':catmessenger-common', configuration: 'shadow')
 }
 

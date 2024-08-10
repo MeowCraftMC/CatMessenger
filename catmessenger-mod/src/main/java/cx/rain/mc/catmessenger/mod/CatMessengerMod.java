@@ -87,14 +87,13 @@ public class CatMessengerMod {
 
         PlayerEvent.PLAYER_JOIN.register(player -> connector.publish(MessageHelper.buildJoinMessage(player.getName().getString())));
         PlayerEvent.PLAYER_QUIT.register(player -> connector.publish(MessageHelper.buildQuitMessage(player.getName().getString())));
-        PlayerEvent.PLAYER_ADVANCEMENT.register((player, advancement) -> {
-            var display = advancement.value().display().orElseThrow();
-            connector.publish(MessageHelper
-                    .buildAdvancementMessage(player.getName().getString(),
-                            display.getTitle().getString(),
-                            display.getDescription().getString(),
-                            display.getType()));
-        });
+
+        PlayerEvent.PLAYER_ADVANCEMENT.register((player, advancement) ->
+                advancement.value().display().ifPresent(d ->
+                        connector.publish(MessageHelper.buildAdvancementMessage(player.getName().getString(),
+                                d.getTitle().getString(),
+                                d.getDescription().getString(),
+                                d.getType()))));
 
         EntityEvent.LIVING_DEATH.register((entity, source) -> {
             if (entity instanceof Player player) {
@@ -104,7 +103,9 @@ public class CatMessengerMod {
         });
 
         ChatEvent.RECEIVED.register((player, component) -> {
-            connector.publish(MessageHelper.buildChatMessage(player.getName().getString(), player.getUUID(), component));
+            if (player != null) {
+                connector.publish(MessageHelper.buildChatMessage(player.getName().getString(), player.getUUID(), component));
+            }
 
             return EventResult.pass();
         });

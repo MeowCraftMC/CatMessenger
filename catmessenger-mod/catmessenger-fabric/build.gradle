@@ -44,6 +44,7 @@ dependencies {
     modImplementation "dev.architectury:architectury-fabric:${architectury_api_version}"
     modRuntimeOnly "com.terraformersmc:modmenu:${mod_menu_version}"
 
+    common(project(path: ':catmessenger-common', configuration: 'shadow')) { transitive = true }
     common(project(path: ':catmessenger-mod', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':catmessenger-mod', configuration: 'transformProductionFabric')
     shadowBundle project(path: ':catmessenger-common', configuration: 'shadow')
