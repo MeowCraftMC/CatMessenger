@@ -176,12 +176,13 @@ public class MessageHelper {
             }
 
             var text = new TextMessage(c.getString());
-            text.setColor(MessageColor.fromString(c.getStyle().getColor().serialize()));
-            text.setBold(c.getStyle().isBold());
-            text.setItalic(c.getStyle().isItalic());
-            text.setStrikethrough(c.getStyle().isStrikethrough());
-            text.setUnderline(c.getStyle().isUnderlined());
-            text.setSpoiler(c.getStyle().isObfuscated());
+            var style = c.getStyle();
+            text.setColor(style.getColor() == null ? MessageColor.WHITE : MessageColor.fromString(style.getColor().serialize()));
+            text.setBold(style.isBold());
+            text.setItalic(style.isItalic());
+            text.setStrikethrough(style.isStrikethrough());
+            text.setUnderline(style.isUnderlined());
+            text.setSpoiler(style.isObfuscated());
 
             message.getExtras().add(text);
             list.remove(0);
