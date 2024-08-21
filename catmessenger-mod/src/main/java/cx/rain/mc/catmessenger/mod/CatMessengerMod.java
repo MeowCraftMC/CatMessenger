@@ -8,6 +8,8 @@ import dev.architectury.event.EventResult;
 import dev.architectury.event.events.common.ChatEvent;
 import dev.architectury.event.events.common.EntityEvent;
 import dev.architectury.event.events.common.PlayerEvent;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
 
@@ -30,7 +32,8 @@ public class CatMessengerMod {
     public void start(MinecraftServer server) {
         connector.getMessageQueue().addHandler(message -> server.execute(() -> {
                     var components = MessageHelper.toBroadcast(message);
-                    server.sendSystemMessage(components);
+                    server.getPlayerList().broadcastSystemMessage(components, false);
+//                    server.sendSystemMessage(components);
                 }));
 
         connector.getCommandQueue().addHandler((command, props) -> {

@@ -21,6 +21,8 @@ public class RabbitMQConnector {
     private final MessageQueue messageQueue;
     private final CommandQueue commandQueue;
 
+    private boolean stopping = false;
+
     public RabbitMQConnector(String name, int maxRetryCount, String host, int port, String virtualHost, String username, String password) {
         this.name = name;
 
@@ -45,11 +47,13 @@ public class RabbitMQConnector {
     }
 
     public void connect() {
+        stopping = false;
         messageQueue.connect();
         commandQueue.connect();
     }
 
     public void disconnect() {
+        stopping = true;
         messageQueue.disconnect();
         commandQueue.disconnect();
         try {
@@ -84,10 +88,14 @@ public class RabbitMQConnector {
     }
 
     public void publish(ConnectorMessage message) {
-        messageQueue.publish(message);
+        if (!stopping) {
+            messageQueue.publish(message);
+        }
     }
 
     public void publish(ConnectorCommand command) {
-        commandQueue.publish(command);
+        if (!stopping) {
+            commandQueue.publish(command);
+        }
     }
 }

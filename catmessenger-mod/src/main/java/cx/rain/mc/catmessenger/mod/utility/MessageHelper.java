@@ -19,8 +19,9 @@ public class MessageHelper {
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static Component toBroadcast(ConnectorMessage message) {
-        var result = Component.literal("[" + message.getClient() + "] ");
-        result.withStyle(Style.EMPTY
+        var result = Component.empty();
+        var result1 = Component.literal("[" + message.getClient() + "] ")
+                .withStyle(Style.EMPTY
                 .withColor(ChatFormatting.GREEN)
                 .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                         Component.literal(message.getTime().toLocalDateTime().format(FORMATTER)))));
@@ -34,7 +35,7 @@ public class MessageHelper {
         }
 
         var result3 = toComponent(message.getContent());
-        return result.append(result2).append(result3);
+        return result.append(result1).append(result2).append(result3);
     }
 
     private static MutableComponent toComponent(AbstractMessage message) {
@@ -52,10 +53,14 @@ public class MessageHelper {
                 .withObfuscated(message.isSpoiler());
 
         var color = TextColor.parseColor(message.getColor().asString());
-        color.ifSuccess(style::withColor);
+        if (color.isSuccess()) {
+            style = style.withColor(color.getOrThrow());
+        } else {
+            style = style.withColor(ChatFormatting.RESET);
+        }
 
         if (message.hasHoverMessage()) {
-            style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, toComponent(message.getHoverMessage())));
+            style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, toComponent(message.getHoverMessage())));
         }
 
         if (message.hasClickEvent()) {
@@ -65,8 +70,10 @@ public class MessageHelper {
                 case SUGGEST_COMMAND -> ClickEvent.Action.SUGGEST_COMMAND;
                 case COPY -> ClickEvent.Action.COPY_TO_CLIPBOARD;
             };
-            style.withClickEvent(new ClickEvent(action, message.getClickValue()));
+            style = style.withClickEvent(new ClickEvent(action, message.getClickValue()));
         }
+
+        component.setStyle(style);
 
         if (message.hasExtra()) {
             for (var extra : message.getExtras()) {
