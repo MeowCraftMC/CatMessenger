@@ -1,7 +1,7 @@
 package cx.rain.mc.catmessenger.paper.utility;
 
 import cx.rain.mc.catmessenger.api.message.Player;
-import cx.rain.mc.catmessenger.api.utilities.ComponentParser;
+import cx.rain.mc.catmessenger.api.utilities.ComponentSerializer;
 import cx.rain.mc.catmessenger.api.utilities.MessageParser;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
@@ -10,7 +10,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 public class BukkitMessageHelper {
 
     public static Player createPlayer(org.bukkit.entity.Player player) {
-        return new Player(player.getName(), player.getUniqueId(), ComponentParser.toLegacy(player.displayName()));
+        return new Player(player.getName(), player.getUniqueId(), ComponentSerializer.toLegacy(player.displayName()));
     }
 
     public static Component playerAdvancement(Player player, Component title, Component description, AdvancementDisplay.Frame frame) {

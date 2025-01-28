@@ -8,8 +8,8 @@ import net.kyori.adventure.text.format.Style;
 
 import java.time.format.DateTimeFormatter;
 
-import static cx.rain.mc.catmessenger.api.utilities.ComponentParser.fromLegacy;
-import static cx.rain.mc.catmessenger.api.utilities.ComponentParser.fromMiniMessage;
+import static cx.rain.mc.catmessenger.api.utilities.ComponentSerializer.fromLegacy;
+import static cx.rain.mc.catmessenger.api.utilities.ComponentSerializer.fromMiniMessage;
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
 

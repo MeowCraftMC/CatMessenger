@@ -5,7 +5,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
-public class MessageHelper {
+public class MessageFactory {
 
     public static Component serverOnline() {
         return serverOnline(false);

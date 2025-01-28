@@ -45,10 +45,13 @@ dependencies {
     modImplementation "dev.architectury:architectury-fabric:${architectury_api_version}"
     modRuntimeOnly "com.terraformersmc:modmenu:${mod_menu_version}"
 
-    common(project(':common')) { transitive = true }
     common(project(path: ':mod', configuration: 'namedElements')) { transitive = false }
-    shadowBundle project(':common')
     shadowBundle project(path: ':mod', configuration: 'transformProductionFabric')
+
+    include project(':common')
+    modImplementation include(group: 'net.kyori', name: 'adventure-platform-fabric', version: adventure_modded_api_version)
+    include group:'io.vertx', name: 'vertx-core', version : vertx_version
+    include group:'io.vertx', name: 'vertx-rabbitmq-client', version : vertx_version
 }
 
 processResources {

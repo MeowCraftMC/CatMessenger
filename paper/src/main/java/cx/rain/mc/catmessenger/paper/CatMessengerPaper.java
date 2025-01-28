@@ -1,8 +1,8 @@
 package cx.rain.mc.catmessenger.paper;
 
 import cx.rain.mc.catmessenger.api.CatMessenger;
-import cx.rain.mc.catmessenger.api.utilities.ComponentParser;
-import cx.rain.mc.catmessenger.api.utilities.MessageHelper;
+import cx.rain.mc.catmessenger.api.utilities.ComponentSerializer;
+import cx.rain.mc.catmessenger.api.utilities.MessageFactory;
 import cx.rain.mc.catmessenger.api.utilities.MessageParser;
 import cx.rain.mc.catmessenger.paper.config.ConfigManager;
 import cx.rain.mc.catmessenger.paper.handler.AsyncPlayerChatHandler;
@@ -33,7 +33,7 @@ public final class CatMessengerPaper extends JavaPlugin {
                 .scheduleSyncDelayedTask(CatMessengerPaper.getInstance(), () -> {
                     var component = MessageParser.parseFrom(message);
                     Bukkit.broadcast(component);
-                    CatMessengerPaper.getInstance().getLogger().info(ComponentParser.toPlain(component));
+                    CatMessengerPaper.getInstance().getLogger().info(ComponentSerializer.toPlain(component));
                 }));
     }
 
@@ -44,13 +44,13 @@ public final class CatMessengerPaper extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AsyncPlayerChatHandler(), this);
         getServer().getPluginManager().registerEvents(new PlayerEventHandler(), this);
 
-        MessengerHelper.send(MessageHelper.serverOnline());
+        MessengerHelper.send(MessageFactory.serverOnline());
         getSLF4JLogger().info("CatMessenger loaded.");
     }
 
     @Override
     public void onDisable() {
-        MessengerHelper.send(MessageHelper.serverOffline());
+        MessengerHelper.send(MessageFactory.serverOffline());
         messenger.disconnect();
 
         getSLF4JLogger().info("CatMessenger unloaded.");

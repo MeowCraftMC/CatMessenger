@@ -5,7 +5,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
-public class ComponentParser {
+public class ComponentSerializer {
     protected static final PlainTextComponentSerializer PLAIN = PlainTextComponentSerializer.plainText();
     protected static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
     protected static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();

@@ -8,8 +8,8 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import cx.rain.mc.catmessenger.api.CatMessenger;
 import cx.rain.mc.catmessenger.api.message.Message;
-import cx.rain.mc.catmessenger.api.utilities.ComponentParser;
-import cx.rain.mc.catmessenger.api.utilities.MessageHelper;
+import cx.rain.mc.catmessenger.api.utilities.ComponentSerializer;
+import cx.rain.mc.catmessenger.api.utilities.MessageFactory;
 import cx.rain.mc.catmessenger.api.utilities.MessageParser;
 import cx.rain.mc.catmessenger.velocity.config.ConfigManager;
 import net.kyori.adventure.text.Component;
@@ -39,7 +39,7 @@ public final class CatMessengerVelocity {
 
         this.messenger.consumeMessage(message -> {
             var component = MessageParser.parseFrom(message);
-            logger.info(ComponentParser.toPlain(component));
+            logger.info(ComponentSerializer.toPlain(component));
         });
     }
 
@@ -47,20 +47,20 @@ public final class CatMessengerVelocity {
     public void onProxyInit(ProxyInitializeEvent event) {
         messenger.connect();
 
-        sendMessage(MessageHelper.serverOnline(true));
+        sendMessage(MessageFactory.serverOnline(true));
         logger.info("Loaded!");
     }
 
     @Subscribe
     public void onProxyShutdown(ProxyShutdownEvent event) {
-        sendMessage(MessageHelper.serverOffline(true));
+        sendMessage(MessageFactory.serverOffline(true));
 
         messenger.disconnect();
         logger.info("Bye~");
     }
 
     public void sendMessage(Component component) {
-        var content = ComponentParser.toMiniMessage(component);
+        var content = ComponentSerializer.toMiniMessage(component);
         messenger.sendMessage(new Message(config.get().getName(), content));
     }
 }

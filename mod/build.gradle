@@ -24,10 +24,7 @@ dependencies {
     modImplementation "dev.architectury:architectury:${architectury_api_version}"
 
     implementation project(':common')
-
-//    include group: 'io.vertx', name: 'vertx-core', version: vertx_version
-//    include group: 'io.vertx', name: 'vertx-rabbitmq-client', version: vertx_version
-//    include group: 'net.kyori', name: 'adventure-platform-mod-shared-fabric-repack', version: adventure_modded_api_version
+    modCompileOnly group: 'net.kyori', name: 'adventure-platform-mod-shared-fabric-repack', version: adventure_modded_api_version
 }
 
 processResources {
