@@ -1,9 +1,8 @@
 name: CatMessenger
 version: '${version}'
-main: cx.rain.mc.catmessenger.bukkit.CatMessengerBukkit
+main: cx.rain.mc.catmessenger.paper.CatMessengerPaper
 api-version: '1.21'
 load: POSTWORLD
 authors:
   - qyl27
-depend:
-  - AfyBroker
+depend: []

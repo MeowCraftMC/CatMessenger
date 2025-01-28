@@ -94,6 +94,10 @@ allprojects {
 subprojects {
     apply plugin: 'java'
 
+    base {
+        archivesBaseName = "catmessenger-${project.name}"
+    }
+
     dependencies {
         compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.36'
         annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.36'

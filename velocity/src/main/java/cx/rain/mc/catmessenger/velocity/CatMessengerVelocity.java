@@ -6,59 +6,61 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
-import com.velocitypowered.api.proxy.ProxyServer;
+import cx.rain.mc.catmessenger.api.CatMessenger;
+import cx.rain.mc.catmessenger.api.message.Message;
+import cx.rain.mc.catmessenger.api.utilities.ComponentParser;
+import cx.rain.mc.catmessenger.api.utilities.MessageHelper;
+import cx.rain.mc.catmessenger.api.utilities.MessageParser;
 import cx.rain.mc.catmessenger.velocity.config.ConfigManager;
-import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
 
-@Plugin(id = "catmessenger", name = "CatMessenger", version = "2.0.0",
+@Plugin(id = "catmessenger", name = "CatMessenger", version = "3.0.0",
         url = "https://github.com/MeowCraftMC/CatMessenger", authors = {"qyl27"})
 public final class CatMessengerVelocity {
-    private static CatMessengerVelocity INSTANCE;
 
-    private final ProxyServer server;
-    @Getter
     private final Logger logger;
-    private final Path dataDir;
-
     private final ConfigManager config;
+    private final CatMessenger messenger;
 
     @Inject
-    public CatMessengerVelocity(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
-        INSTANCE = this;
-
-        this.server = server;
+    public CatMessengerVelocity(Logger logger, @DataDirectory Path dataDirectory) {
         this.logger = logger;
-        this.dataDir = dataDirectory;
 
-        config = new ConfigManager(logger, dataDirectory);
+        this.config = new ConfigManager(logger, dataDirectory);
 
-//        connector = new RabbitMQConnector(config.getName(), config.getConnectorRetry(),
-//                config.getConnectorHost(), config.getConnectorPort(), config.getConnectorVirtualHost(),
-//                config.getConnectorUsername(), config.getConnectorPassword());
+        this.messenger = new CatMessenger(config.get().getId(),
+                config.get().getRabbitMQ().getHost(), config.get().getRabbitMQ().getPort(),
+                config.get().getRabbitMQ().getUsername(), config.get().getRabbitMQ().getPassword(),
+                config.get().getRabbitMQ().getVirtualHost(),
+                config.get().getRabbitMQ().getMaxRetry(), config.get().getRabbitMQ().getRetryIntervalMillis());
+
+        this.messenger.consumeMessage(message -> {
+            var component = MessageParser.parseFrom(message);
+            logger.info(ComponentParser.toPlain(component));
+        });
     }
 
     @Subscribe
     public void onProxyInit(ProxyInitializeEvent event) {
-//        getConnector().connect();
+        messenger.connect();
 
-//        getConnector().publish(MessageHelper.buildServerOnlineMessage());
-
-        getLogger().info("Loaded!");
+        sendMessage(MessageHelper.serverOnline(true));
+        logger.info("Loaded!");
     }
 
     @Subscribe
     public void onProxyShutdown(ProxyShutdownEvent event) {
-//        getConnector().publish(MessageHelper.buildServerOfflineMessage());
+        sendMessage(MessageHelper.serverOffline(true));
 
-//        getConnector().disconnect();
-
-        getLogger().info("Bye~");
+        messenger.disconnect();
+        logger.info("Bye~");
     }
 
-    public static CatMessengerVelocity getInstance() {
-        return INSTANCE;
+    public void sendMessage(Component component) {
+        var content = ComponentParser.toMiniMessage(component);
+        messenger.sendMessage(new Message(config.get().getName(), content));
     }
 }

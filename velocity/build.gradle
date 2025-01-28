@@ -1,5 +1,6 @@
 plugins {
-    id 'xyz.jpenilla.run-velocity' version "${run_task_plugin_version}"
+    id 'com.gradleup.shadow'
+    id 'xyz.jpenilla.run-velocity'
 }
 
 version = rootProject.version
@@ -8,11 +9,30 @@ dependencies {
     compileOnly "com.velocitypowered:velocity-api:${velocity_api_version}"
     annotationProcessor "com.velocitypowered:velocity-api:${velocity_api_version}"
 
-    implementation group:'io.vertx', name: 'vertx-core', version : vertx_version
-
     implementation project(':common')
+
+    shadow(project(':common')) {
+        transitive false
+    }
+    shadow group:'io.vertx', name: 'vertx-core', version : vertx_version
+    shadow group:'io.vertx', name: 'vertx-rabbitmq-client', version : vertx_version
 }
 
 runVelocity {
     velocityVersion velocity_runtime_version
 }
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+
+    dependencies {
+        exclude(dependency('org.slf4j:'))
+        exclude(dependency('io.netty:'))
+    }
+
+    relocate 'io.vertx', 'catmessenger.libs.vertx'
+    relocate 'com.rabbitmq', 'catmessenger.libs.rabbitmq'
+    relocate 'com', 'catmessenger.libs.com'
+}
+
+jar.finalizedBy(shadowJar)

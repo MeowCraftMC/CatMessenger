@@ -1,15 +1,34 @@
 package cx.rain.mc.catmessenger.mod.config;
 
-public class ModConfig {
-    public String name = "ExampleModdedMinecraftServer";
-    public ConnectorConfig connector = new ConnectorConfig();
+import lombok.Getter;
+import lombok.Setter;
 
-    public static class ConnectorConfig {
-        public String host = "localhost";
-        public int port = 5672;
-        public String username = "guest";
-        public String password = "guest";
-        public String virtualHost = "/minecraft";
-        public int maxRetry = 5;
+import java.io.Serializable;
+
+@Getter
+@Setter
+public class ModConfig implements Serializable {
+    private String id = "exampleModServer";
+
+    private String name = "Example Mod Platform";
+
+    private RabbitMQConfig rabbitMQ = new RabbitMQConfig();
+
+    @Getter
+    @Setter
+    public static class RabbitMQConfig implements Serializable {
+        private String host = "localhost";
+
+        private int port = 5672;
+
+        private String username = "guest";
+
+        private String password = "guest";
+
+        private String virtualHost = "/minecraft";
+
+        private int maxRetry = 5;
+
+        private long retryIntervalMillis = 500;
     }
 }

@@ -1,93 +1,86 @@
 package cx.rain.mc.catmessenger.velocity.config;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
-import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.HashMap;
 
 public class ConfigManager {
-    private final Logger logger;
-    private final Path dataDir;
 
-    private final HoconConfigurationLoader config;
+    private final File configFile;
+    private final HoconConfigurationLoader loader;
+
     private ConfigurationNode rootNode;
 
+    @SneakyThrows
     public ConfigManager(Logger logger, Path dataDir) {
-        this.logger = logger;
-        this.dataDir = dataDir;
-
-        var file = new File(dataDir.toFile(), "catmessenger.conf");
-
-        config = HoconConfigurationLoader.builder()
-                .path(file.toPath())
+        configFile = new File(dataDir.toFile(), "catmessenger.conf");
+        loader = HoconConfigurationLoader.builder()
+                .path(configFile.toPath())
                 .emitComments(true)
                 .prettyPrinting(true)
                 .build();
 
-        try {
-            if (!file.exists()) {
-                saveDefault();
-            }
+        reload();
+    }
 
-            rootNode = config.load();
-        } catch (ConfigurateException ex) {
-            throw new RuntimeException(ex);
+    @SneakyThrows
+    private void saveDefault() {
+        var root = loader.createNode();
+        root.set(new Config());
+        loader.save(root);
+    }
+
+    @SneakyThrows
+    public void reload() {
+        if (!configFile.exists()) {
+            saveDefault();
         }
+        rootNode = loader.load();
     }
 
-    private void saveDefault() throws ConfigurateException {
-        var root = config.createNode();
-        root.commentIfAbsent("Config of CatMessenger.");
-        var name = root.node("name");
-        name.commentIfAbsent("Server name.");
-        name.set("ExampleVelocityServer");
-        var connector = root.node("connector");
-        connector.commentIfAbsent("RabbitMQ connection info.");
-        var connectorHost = connector.node("host");
-        var connectorPort = connector.node("port");
-        var connectorVirtualHost = connector.node("virtualHost");
-        var connectorUsername = connector.node("username");
-        var connectorPassword = connector.node("password");
-        var connectorRetry = connector.node("maxRetry");
-        connectorHost.set("localhost");
-        connectorPort.set(5672);
-        connectorVirtualHost.set("/minecraft");
-        connectorUsername.set("guest");
-        connectorPassword.set("guest");
-        connectorRetry.set(5);
-
-        config.save(root);
+    @SneakyThrows
+    public Config get() {
+        return rootNode.get(Config.class);
     }
 
-    public String getName() {
-        return rootNode.node("name").getString();
-    }
+    @Getter
+    @Setter
+    @ConfigSerializable
+    public static class Config {
+        @Comment("Client Id.")
+        private String id = "velocity";
 
-    public String getConnectorHost() {
-        return rootNode.node("connector", "host").getString();
-    }
+        @Comment("Platform name.")
+        private String name = "ExampleVelocity";
 
-    public int getConnectorPort() {
-        return rootNode.node("connector", "port").getInt();
-    }
+        @Comment("RabbitMQ connection info.")
+        private RabbitMQConfig rabbitMQ = new RabbitMQConfig();
 
-    public String getConnectorVirtualHost() {
-        return rootNode.node("connector", "virtualHost").getString();
-    }
+        @Getter
+        @Setter
+        @ConfigSerializable
+        public static class RabbitMQConfig {
+            private String host = "localhost";
 
-    public String getConnectorUsername() {
-        return rootNode.node("connector", "username").getString();
-    }
+            private int port = 5672;
 
-    public String getConnectorPassword() {
-        return rootNode.node("connector", "password").getString();
-    }
+            private String username = "guest";
 
-    public int getConnectorRetry() {
-        return rootNode.node("connector", "maxRetry").getInt();
+            private String password = "guest";
+
+            private String virtualHost = "/minecraft";
+
+            private int maxRetry = 5;
+
+            private long retryIntervalMillis = 500;
+        }
     }
 }

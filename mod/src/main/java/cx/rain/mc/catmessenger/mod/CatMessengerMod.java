@@ -1,5 +1,8 @@
 package cx.rain.mc.catmessenger.mod;
 
+import cx.rain.mc.catmessenger.api.CatMessenger;
+import cx.rain.mc.catmessenger.api.utilities.MessageHelper;
+import cx.rain.mc.catmessenger.api.utilities.MessageParser;
 import cx.rain.mc.catmessenger.mod.config.ModConfig;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.common.ChatEvent;
@@ -14,21 +17,26 @@ import java.util.Arrays;
 public class CatMessengerMod {
 
     private final ModConfig config;
-    private final RabbitMQConnector connector;
+    private final CatMessenger messenger;
 
     public CatMessengerMod(ModConfig config) {
         this.config = config;
 
-//        connector = new RabbitMQConnector(config.name, config.connector.maxRetry,
-//                config.connector.host, config.connector.port, config.connector.virtualHost,
-//                config.connector.username, config.connector.password);
+        this.messenger = new CatMessenger(config.getId(),
+                config.getRabbitMQ().getHost(), config.getRabbitMQ().getPort(),
+                config.getRabbitMQ().getUsername(), config.getRabbitMQ().getPassword(),
+                config.getRabbitMQ().getVirtualHost(),
+                config.getRabbitMQ().getMaxRetry(), config.getRabbitMQ().getRetryIntervalMillis());
     }
 
     public void start(MinecraftServer server) {
-//        connector.getMessageQueue().addHandler(message -> server.execute(() -> {
-//                    var components = MessageHelper.toBroadcast(message);
+
+
+        messenger.connect();
+
+//        messenger.consumeMessage(message -> server.execute(() -> {
+//                    var components = MessageParser.parseFrom(message);
 //                    server.getPlayerList().broadcastSystemMessage(components, false);
-////                    server.sendSystemMessage(components);
 //                }));
 
 //        connector.getCommandQueue().addHandler((command, props) -> {

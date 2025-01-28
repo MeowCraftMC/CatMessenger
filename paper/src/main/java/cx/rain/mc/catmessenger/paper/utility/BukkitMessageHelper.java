@@ -1,4 +1,4 @@
-package cx.rain.mc.catmessenger.bukkit.utility;
+package cx.rain.mc.catmessenger.paper.utility;
 
 import cx.rain.mc.catmessenger.api.message.Player;
 import cx.rain.mc.catmessenger.api.utilities.ComponentParser;

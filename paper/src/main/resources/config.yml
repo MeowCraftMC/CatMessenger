@@ -1,6 +1,10 @@
 id: 'example1'
 name: 'ExampleMinecraftServer'
-broker:
+rabbitmq:
   host: 'localhost'
   port: 5672
-  timeoutMillis: 3000
+  username: 'guest'
+  password: 'guest'
+  virtualHost: '/minecraft'
+  maxRetry: 5
+  retryIntervalMillis: 1000

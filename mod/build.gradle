@@ -24,22 +24,26 @@ dependencies {
     modImplementation "dev.architectury:architectury:${architectury_api_version}"
 
     implementation project(':common')
+
+//    include group: 'io.vertx', name: 'vertx-core', version: vertx_version
+//    include group: 'io.vertx', name: 'vertx-rabbitmq-client', version: vertx_version
+//    include group: 'net.kyori', name: 'adventure-platform-mod-shared-fabric-repack', version: adventure_modded_api_version
 }
 
 processResources {
     var resourcesToReplace = ['build.properties', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml', 'pack.mcmeta', 'fabric.mod.json']
     var replaceTokens = [
-            minecraft_version: minecraft_version,
-            mod_id: project_id,
-            mod_name: project_name,
-            mod_version: project_version,
+            minecraft_version       : minecraft_version,
+            mod_id                  : project_id,
+            mod_name                : project_name,
+            mod_version             : project_version,
             architectury_api_version: architectury_api_version,
-            fabric_loader_version: fabric_loader_version,
-            fabric_api_version: fabric_api_version,
+            fabric_loader_version   : fabric_loader_version,
+            fabric_api_version      : fabric_api_version,
 //            forge_loader_version: forge_loader_version,
 //            forge_version: forge_version,
-            neoforge_loader_version: neoforge_loader_version,
-            neoforge_version: neoforge_version,
+            neoforge_loader_version : neoforge_loader_version,
+            neoforge_version        : neoforge_version,
     ]
 
     inputs.properties replaceTokens

@@ -1,5 +1,8 @@
 dependencies {
     implementation group:'io.vertx', name: 'vertx-core', version : vertx_version
+    implementation group:'io.vertx', name: 'vertx-rabbitmq-client', version : vertx_version
+
+    implementation group: 'com.google.code.gson', name: 'gson', version: gson_version
 
     implementation group: 'net.kyori', name: 'adventure-api', version: adventure_api_version
     implementation group: 'net.kyori', name: 'adventure-text-serializer-plain', version: adventure_api_version
