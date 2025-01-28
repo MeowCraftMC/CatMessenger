@@ -1,0 +1,17 @@
+dependencies {
+    implementation group:'io.vertx', name: 'vertx-core', version : vertx_version
+
+    implementation group: 'net.kyori', name: 'adventure-api', version: adventure_api_version
+    implementation group: 'net.kyori', name: 'adventure-text-serializer-plain', version: adventure_api_version
+    implementation group: 'net.kyori', name: 'adventure-text-serializer-legacy', version: adventure_api_version
+    implementation group: 'net.kyori', name: 'adventure-text-minimessage', version: adventure_api_version
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'catmessenger-common'
+            from components.java
+        }
+    }
+}

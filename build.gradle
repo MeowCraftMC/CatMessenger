@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
     id 'architectury-plugin' version "${architect_plugin_version}" apply false
     id 'dev.architectury.loom' version "${loom_plugin_version}" apply false
-    id 'com.github.johnrengelman.shadow' version "${shadow_plugin_version}" apply false
+    id 'com.gradleup.shadow' version "${shadow_plugin_version}" apply false
     id 'xyz.jpenilla.run-paper' version "${run_task_plugin_version}" apply false
     id 'xyz.jpenilla.run-waterfall' version "${run_task_plugin_version}" apply false
     id 'xyz.jpenilla.run-velocity' version "${run_task_plugin_version}" apply false
@@ -18,6 +18,8 @@ allprojects {
     version = project_version
 
     repositories {
+        mavenLocal()
+
         maven {
             name = 'ParchmentMC'
             url = 'https://maven.parchmentmc.org'
@@ -41,11 +43,6 @@ allprojects {
         maven {
             name = 'NeoForged'
             url = 'https://maven.neoforged.net/releases/'
-        }
-
-        maven {
-            name = 'SpigotMC'
-            url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
         }
 
         maven {
@@ -96,9 +93,11 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'com.github.johnrengelman.shadow'
 
-    jar.finalizedBy(shadowJar)
+    dependencies {
+        compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.36'
+        annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.36'
+    }
 
     java {
         sourceCompatibility = JavaVersion.toVersion(project.target_java_version)
@@ -110,21 +109,6 @@ subprojects {
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
-        options.release = Integer.parseInt(project.target_java_version)
-    }
-
-    components.java {
-        withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
-            skip()
-        }
-    }
-
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                artifactId = project.name
-                from components.java
-            }
-        }
+        options.release = JavaLanguageVersion.of(project.target_java_version).asInt()
     }
 }

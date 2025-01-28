@@ -1,0 +1,6 @@
+id: 'example1'
+name: 'ExampleMinecraftServer'
+broker:
+  host: 'localhost'
+  port: 5672
+  timeoutMillis: 3000

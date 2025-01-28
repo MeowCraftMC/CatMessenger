@@ -11,9 +11,9 @@ pluginManagement {
 
 rootProject.name = 'catmessenger'
 
-include ':catmessenger-common'
-include ':catmessenger-bungeecord'
-include ':catmessenger-bukkit'
-include ':catmessenger-velocity'
-include ':catmessenger-mod'
-include ':catmessenger-mod:catmessenger-fabric'
+include ':common'
+include ':server'
+include ':paper'
+include ':velocity'
+include ':mod'
+include ':mod:fabric'

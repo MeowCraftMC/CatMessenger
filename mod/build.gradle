@@ -1,0 +1,51 @@
+plugins {
+    id 'architectury-plugin'
+    id 'dev.architectury.loom'
+}
+
+architectury {
+    minecraft = minecraft_version
+    common(enabled_platforms.split(','))
+}
+
+loom {
+    silentMojangMappingsLicense()
+    accessWidenerPath = file("src/main/resources/catmessenger.accesswidener")
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${parchment_minecraft_version}:${parchment_version}@zip")
+    }
+
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "dev.architectury:architectury:${architectury_api_version}"
+
+    implementation project(':common')
+}
+
+processResources {
+    var resourcesToReplace = ['build.properties', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml', 'pack.mcmeta', 'fabric.mod.json']
+    var replaceTokens = [
+            minecraft_version: minecraft_version,
+            mod_id: project_id,
+            mod_name: project_name,
+            mod_version: project_version,
+            architectury_api_version: architectury_api_version,
+            fabric_loader_version: fabric_loader_version,
+            fabric_api_version: fabric_api_version,
+//            forge_loader_version: forge_loader_version,
+//            forge_version: forge_version,
+            neoforge_loader_version: neoforge_loader_version,
+            neoforge_version: neoforge_version,
+    ]
+
+    inputs.properties replaceTokens
+    filesMatching(resourcesToReplace) {
+        expand replaceTokens
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

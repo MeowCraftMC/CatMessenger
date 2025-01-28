@@ -1,0 +1,14 @@
+dependencies {
+    implementation group:'io.vertx', name: 'vertx-core', version : vertx_version
+
+    implementation project(':common')
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'catmessenger-server'
+            from components.java
+        }
+    }
+}

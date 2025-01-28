@@ -1,0 +1,101 @@
+plugins {
+    id 'architectury-plugin'
+    id 'dev.architectury.loom'
+    id 'com.gradleup.shadow'
+}
+
+architectury {
+    minecraft = minecraft_version
+    platformSetupLoomIde()
+    fabric()
+}
+
+loom {
+    silentMojangMappingsLicense()
+    accessWidenerPath = project(':mod').loom.accessWidenerPath
+}
+
+configurations {
+    common {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentFabric.extendsFrom common
+
+    // Files in this configuration will be bundled into your mod using the Shadow plugin.
+    // Don't use the `shadow` configuration from the plugin itself as it's meant for excluding files.
+    shadowBundle {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+}
+
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${parchment_minecraft_version}:${parchment_version}@zip")
+    }
+
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modApi "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+    modImplementation "dev.architectury:architectury-fabric:${architectury_api_version}"
+    modRuntimeOnly "com.terraformersmc:modmenu:${mod_menu_version}"
+
+    common(project(':common')) { transitive = true }
+    common(project(path: ':mod', configuration: 'namedElements')) { transitive = false }
+    shadowBundle project(':common')
+    shadowBundle project(path: ':mod', configuration: 'transformProductionFabric')
+}
+
+processResources {
+    var resourcesToReplace = ['build.properties', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml', 'pack.mcmeta', 'fabric.mod.json']
+    var replaceTokens = [
+            minecraft_version: minecraft_version,
+            mod_id: project_id,
+            mod_name: project_name,
+            mod_version: project_version,
+            architectury_api_version: architectury_api_version,
+            fabric_loader_version: fabric_loader_version,
+            fabric_api_version: fabric_api_version,
+//            forge_loader_version: forge_loader_version,
+//            forge_version: forge_version,
+            neoforge_loader_version: neoforge_loader_version,
+            neoforge_version: neoforge_version,
+    ]
+
+    inputs.properties replaceTokens
+    filesMatching(resourcesToReplace) {
+        expand replaceTokens
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+components.java {
+    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+        skip()
+    }
+}
+
+shadowJar {
+    exclude 'architectury.common.json'
+
+    configurations = [project.configurations.shadowBundle]
+    archiveClassifier = 'dev-shadow'
+}
+
+remapJar {
+    injectAccessWidener = true
+    input.set shadowJar.archiveFile
+    dependsOn shadowJar
+}
+
+sourcesJar {
+    def commonSources = project(':mod').sourcesJar
+    dependsOn commonSources
+    from commonSources.archiveFile.map { zipTree(it) }
+}
