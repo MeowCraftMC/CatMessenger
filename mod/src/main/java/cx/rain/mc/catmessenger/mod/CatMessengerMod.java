@@ -27,12 +27,11 @@ public class CatMessengerMod {
         this.messenger = new CatMessenger(config.getId(),
                 config.getRabbitMQ().getHost(), config.getRabbitMQ().getPort(),
                 config.getRabbitMQ().getUsername(), config.getRabbitMQ().getPassword(),
-                config.getRabbitMQ().getVirtualHost(),
-                config.getRabbitMQ().getMaxRetry(), config.getRabbitMQ().getRetryIntervalMillis());
+                config.getRabbitMQ().getVirtualHost());
     }
 
     public void start(MinecraftServer server) {
-        messenger.consumeMessage(message -> server.execute(() -> {
+        messenger.getMessage().handler(message -> server.execute(() -> {
             var components = ComponentParser.parseFrom(message);
             server.getPlayerList().getPlayers().forEach(player -> {
                 if (player instanceof Audience audience) {
@@ -90,12 +89,12 @@ public class CatMessengerMod {
     }
 
     public void sendMessage(net.kyori.adventure.text.Component component) {
-        var content = ComponentSerializer.toMiniMessage(component);
-        messenger.sendMessage(new Message(config.getName(), content));
+        var content = ComponentSerializer.toLegacy(component);
+        messenger.getMessage().publish(new Message(config.getName(), content));
     }
 
     public void sendMessage(cx.rain.mc.catmessenger.api.model.Player player, net.kyori.adventure.text.Component component) {
-        var content = ComponentSerializer.toMiniMessage(component);
-        messenger.sendMessage(new Message(config.getName(), player, content));
+        var content = ComponentSerializer.toLegacy(component);
+        messenger.getMessage().publish(new Message(config.getName(), player, content));
     }
 }

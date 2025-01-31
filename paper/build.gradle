@@ -34,12 +34,9 @@ shadowJar {
 
     dependencies {
         exclude(dependency('org.slf4j:'))
-        exclude(dependency('io.netty:'))
     }
 
-    relocate 'io.vertx', 'catmessenger.libs.vertx'
     relocate 'com.rabbitmq', 'catmessenger.libs.rabbitmq'
-    relocate 'com', 'catmessenger.libs.com'
 }
 
 jar.finalizedBy(shadowJar)
