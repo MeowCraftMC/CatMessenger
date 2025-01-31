@@ -29,8 +29,8 @@ public class BukkitMessageHelper {
             case TASK -> NamedTextColor.DARK_PURPLE;
         };
 
-        return result.append(Component.text("[" + title + "]")
+        return result.append(Component.text("[" + title.toString() + "]")
                         .color(color))
-                .hoverEvent(description);
+                .hoverEvent(Component.text(description.toString()));
     }
 }

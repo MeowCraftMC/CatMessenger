@@ -78,6 +78,11 @@ public abstract class AbstractNotify<MESSAGE> extends AbstractQueue {
         public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
                                    byte[] body) throws IOException {
             Thread.startVirtualThread(() -> {
+                if (queue.getClientId().equals(properties.getAppId())) {
+                    queue.ack(envelope.getDeliveryTag());
+                    return;
+                }
+
                 var str = new String(body, StandardCharsets.UTF_8);
                 var message = GSON.fromJson(str, queue.messageType);
 

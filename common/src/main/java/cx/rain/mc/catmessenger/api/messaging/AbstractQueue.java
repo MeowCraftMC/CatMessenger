@@ -1,5 +1,6 @@
 package cx.rain.mc.catmessenger.api.messaging;
 
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Consumer;
@@ -84,7 +85,8 @@ public abstract class AbstractQueue {
                     getChannel().basicRecover();
                 }
 
-                getChannel().basicPublish(getExchangeName(), getRoutingKey(), null, bytes);
+                var props = new AMQP.BasicProperties.Builder().appId(clientId).build();
+                getChannel().basicPublish(getExchangeName(), getRoutingKey(), props, bytes);
                 return;
             } catch (IOException ex) {
                 retried += 1;
