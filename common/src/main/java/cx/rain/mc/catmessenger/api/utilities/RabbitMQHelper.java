@@ -16,4 +16,8 @@ public class RabbitMQHelper {
     public static String getCommandQueue(String clientId) {
         return "topic.queue." + clientId;
     }
+
+    public static String getCommandRoutingKey(String clientId) {
+        return clientId;
+    }
 }

@@ -50,8 +50,7 @@ dependencies {
 
     include project(':common')
     modImplementation include(group: 'net.kyori', name: 'adventure-platform-fabric', version: adventure_modded_api_version)
-    include group:'io.vertx', name: 'vertx-core', version : vertx_version
-    include group:'io.vertx', name: 'vertx-rabbitmq-client', version : vertx_version
+    include group: 'com.rabbitmq', name: 'amqp-client', version: amqp_version
 }
 
 processResources {

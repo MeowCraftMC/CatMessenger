@@ -1,7 +1,7 @@
 package cx.rain.mc.catmessenger.api.utilities;
 
-import cx.rain.mc.catmessenger.api.message.Message;
-import cx.rain.mc.catmessenger.api.message.Player;
+import cx.rain.mc.catmessenger.api.model.Message;
+import cx.rain.mc.catmessenger.api.model.Player;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
@@ -9,11 +9,10 @@ import net.kyori.adventure.text.format.Style;
 import java.time.format.DateTimeFormatter;
 
 import static cx.rain.mc.catmessenger.api.utilities.ComponentSerializer.fromLegacy;
-import static cx.rain.mc.catmessenger.api.utilities.ComponentSerializer.fromMiniMessage;
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
 
-public class MessageParser {
+public class ComponentParser {
     protected static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static Component parseFrom(Message message) {
@@ -25,7 +24,7 @@ public class MessageParser {
             result = result.append(parseSender(message.getSender()));
         }
 
-        return result.append(fromMiniMessage(message.getContent()));
+        return result.append(fromLegacy(message.getContent()));
     }
 
     private static Component parsePlatform(String platform) {

@@ -1,8 +1,8 @@
 package cx.rain.mc.catmessenger.mod.utility;
 
-import cx.rain.mc.catmessenger.api.message.Player;
+import cx.rain.mc.catmessenger.api.model.Player;
 import cx.rain.mc.catmessenger.api.utilities.ComponentSerializer;
-import cx.rain.mc.catmessenger.api.utilities.MessageParser;
+import cx.rain.mc.catmessenger.api.utilities.ComponentParser;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -22,7 +22,7 @@ public class ModMessengerHelper {
     }
 
     public static Component playerAdvancement(net.minecraft.world.entity.player.Player player, DisplayInfo display) {
-        var result = MessageParser.parsePlayer(createPlayer(player));
+        var result = ComponentParser.parsePlayer(createPlayer(player));
 
         var text = switch (display.getType()) {
             case TASK -> " 取得了进度 ";

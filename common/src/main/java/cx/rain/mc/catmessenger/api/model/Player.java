@@ -1,4 +1,4 @@
-package cx.rain.mc.catmessenger.api.message;
+package cx.rain.mc.catmessenger.api.model;
 
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -32,34 +32,34 @@ public class Player implements Serializable {
     }
 
     /**
-     * Sender id in the specific platform.
-     * Literal string.
+     * Sender id in the specific platform. <br/>
+     * Literal string. <br/>
      * For Telegram: without the heading @.
      */
     String id;
 
     /**
-     * Player uuid.
+     * Player uuid. <br/>
      * Null when on tg or player is a bot.
      */
     @Nullable
     UUID uuid;
 
     /**
-     * Displaying name.
-     * Legacy format supported. (Use & as shift symbol, and &#FFFFFF for hex colors.)
+     * Displaying name. <br/>
+     * Legacy format. See {@link Message#content}
      */
     @Nullable
     String name;
 
     /**
-     * Legacy format supported. (Use & as shift symbol, and &#FFFFFF for hex colors.)
+     * Legacy format. See {@link Message#content}
      */
     @Nullable
     String prefix;
 
     /**
-     * Legacy format supported. (Use & as shift symbol, and &#FFFFFF for hex colors.)
+     * Legacy format. See {@link Message#content}
      */
     @Nullable
     String suffix;

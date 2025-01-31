@@ -6,5 +6,3 @@ rabbitmq:
   username: 'guest'
   password: 'guest'
   virtualHost: '/minecraft'
-  maxRetry: 5
-  retryIntervalMillis: 1000

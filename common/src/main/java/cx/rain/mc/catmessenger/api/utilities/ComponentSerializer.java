@@ -5,11 +5,12 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
-public class ComponentSerializer {
+public class  ComponentSerializer {
     protected static final PlainTextComponentSerializer PLAIN = PlainTextComponentSerializer.plainText();
     protected static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
     protected static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
+    @Deprecated(forRemoval = true)
     public static Component fromMiniMessage(String str) {
         return MINI_MESSAGE.deserialize(str);
     }
@@ -22,6 +23,7 @@ public class ComponentSerializer {
         return LEGACY.serialize(component);
     }
 
+    @Deprecated(forRemoval = true)
     public static String toMiniMessage(Component component) {
         return MINI_MESSAGE.serialize(component);
     }

@@ -20,7 +20,7 @@ public class ConfigManager {
     private ConfigurationNode rootNode;
 
     @SneakyThrows
-    public ConfigManager(Logger logger, Path dataDir) {
+    public ConfigManager(Path dataDir) {
         configFile = new File(dataDir.toFile(), "catmessenger.conf");
         loader = HoconConfigurationLoader.builder()
                 .path(configFile.toPath())
@@ -77,10 +77,6 @@ public class ConfigManager {
             private String password = "guest";
 
             private String virtualHost = "/minecraft";
-
-            private int maxRetry = 5;
-
-            private long retryIntervalMillis = 500;
         }
     }
 }

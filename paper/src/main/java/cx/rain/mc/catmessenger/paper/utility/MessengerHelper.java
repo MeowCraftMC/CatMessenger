@@ -1,7 +1,7 @@
 package cx.rain.mc.catmessenger.paper.utility;
 
-import cx.rain.mc.catmessenger.api.message.Message;
-import cx.rain.mc.catmessenger.api.message.Player;
+import cx.rain.mc.catmessenger.api.model.Message;
+import cx.rain.mc.catmessenger.api.model.Player;
 import cx.rain.mc.catmessenger.api.utilities.ComponentSerializer;
 import cx.rain.mc.catmessenger.paper.CatMessengerPaper;
 import net.kyori.adventure.text.Component;
@@ -18,7 +18,7 @@ public class MessengerHelper {
     private static void sendInternal(Player player, Component content) {
         var plugin = CatMessengerPaper.getInstance();
         var platform = plugin.getConfigManager().getName();
-        var message = new Message(platform, player, ComponentSerializer.toMiniMessage(content));
-        plugin.getMessenger().sendMessage(message);
+        var message = new Message(platform, player, ComponentSerializer.toLegacy(content));
+        plugin.getMessenger().getMessage().publish(message);
     }
 }

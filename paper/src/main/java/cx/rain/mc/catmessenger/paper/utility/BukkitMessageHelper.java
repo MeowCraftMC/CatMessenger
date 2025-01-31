@@ -1,8 +1,8 @@
 package cx.rain.mc.catmessenger.paper.utility;
 
-import cx.rain.mc.catmessenger.api.message.Player;
+import cx.rain.mc.catmessenger.api.model.Player;
 import cx.rain.mc.catmessenger.api.utilities.ComponentSerializer;
-import cx.rain.mc.catmessenger.api.utilities.MessageParser;
+import cx.rain.mc.catmessenger.api.utilities.ComponentParser;
 import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -14,7 +14,7 @@ public class BukkitMessageHelper {
     }
 
     public static Component playerAdvancement(Player player, Component title, Component description, AdvancementDisplay.Frame frame) {
-        var result = MessageParser.parsePlayer(player);
+        var result = ComponentParser.parsePlayer(player);
 
         var text = switch (frame) {
             case TASK -> " 取得了进度 ";

@@ -39,12 +39,4 @@ public class ConfigManager {
     public String getRabbitMQPassword() {
         return config.getString("rabbitmq.password");
     }
-
-    public int getRabbitMQMaxRetry() {
-        return config.getInt("rabbitmq.maxRetry");
-    }
-
-    public long getRabbitMQRetryInterval() {
-        return config.getLong("rabbitmq.retryIntervalMillis");
-    }
 }

@@ -13,8 +13,7 @@ dependencies {
     shadow(project(':common')) {
         transitive false
     }
-    shadow group:'io.vertx', name: 'vertx-core', version : vertx_version
-    shadow group:'io.vertx', name: 'vertx-rabbitmq-client', version : vertx_version
+    shadow group: 'com.rabbitmq', name: 'amqp-client', version: amqp_version
 }
 
 processResources {

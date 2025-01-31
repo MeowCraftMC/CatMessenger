@@ -3,7 +3,7 @@ package cx.rain.mc.catmessenger.paper;
 import cx.rain.mc.catmessenger.api.CatMessenger;
 import cx.rain.mc.catmessenger.api.utilities.ComponentSerializer;
 import cx.rain.mc.catmessenger.api.utilities.MessageFactory;
-import cx.rain.mc.catmessenger.api.utilities.MessageParser;
+import cx.rain.mc.catmessenger.api.utilities.ComponentParser;
 import cx.rain.mc.catmessenger.paper.config.ConfigManager;
 import cx.rain.mc.catmessenger.paper.handler.AsyncPlayerChatHandler;
 import cx.rain.mc.catmessenger.paper.handler.PlayerEventHandler;
@@ -26,12 +26,11 @@ public final class CatMessengerPaper extends JavaPlugin {
         messenger = new CatMessenger(configManager.getId(),
                 configManager.getRabbitMQHost(), configManager.getRabbitMQPort(),
                 configManager.getRabbitMQUsername(), configManager.getRabbitMQPassword(),
-                configManager.getRabbitMQVirtualHost(),
-                configManager.getRabbitMQMaxRetry(), configManager.getRabbitMQRetryInterval());
+                configManager.getRabbitMQVirtualHost());
 
-        messenger.consumeMessage(message -> Bukkit.getScheduler()
+        messenger.getMessage().handler(message -> Bukkit.getScheduler()
                 .scheduleSyncDelayedTask(CatMessengerPaper.getInstance(), () -> {
-                    var component = MessageParser.parseFrom(message);
+                    var component = ComponentParser.parseFrom(message);
                     Bukkit.broadcast(component);
                     CatMessengerPaper.getInstance().getLogger().info(ComponentSerializer.toPlain(component));
                 }));

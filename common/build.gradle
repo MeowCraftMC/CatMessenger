@@ -1,7 +1,8 @@
 dependencies {
-    implementation group:'io.vertx', name: 'vertx-core', version : vertx_version
-    implementation group:'io.vertx', name: 'vertx-rabbitmq-client', version : vertx_version
+    // https://mvnrepository.com/artifact/com.rabbitmq/amqp-client
+    implementation group: 'com.rabbitmq', name: 'amqp-client', version: amqp_version
 
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation group: 'com.google.code.gson', name: 'gson', version: gson_version
 
     implementation group: 'net.kyori', name: 'adventure-api', version: adventure_api_version

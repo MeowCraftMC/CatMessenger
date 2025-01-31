@@ -1,10 +1,10 @@
 package cx.rain.mc.catmessenger.mod;
 
 import cx.rain.mc.catmessenger.api.CatMessenger;
-import cx.rain.mc.catmessenger.api.message.Message;
+import cx.rain.mc.catmessenger.api.model.Message;
 import cx.rain.mc.catmessenger.api.utilities.ComponentSerializer;
 import cx.rain.mc.catmessenger.api.utilities.MessageFactory;
-import cx.rain.mc.catmessenger.api.utilities.MessageParser;
+import cx.rain.mc.catmessenger.api.utilities.ComponentParser;
 import cx.rain.mc.catmessenger.mod.config.ModConfig;
 import cx.rain.mc.catmessenger.mod.utility.ModMessengerHelper;
 import dev.architectury.event.EventResult;
@@ -33,7 +33,7 @@ public class CatMessengerMod {
 
     public void start(MinecraftServer server) {
         messenger.consumeMessage(message -> server.execute(() -> {
-            var components = MessageParser.parseFrom(message);
+            var components = ComponentParser.parseFrom(message);
             server.getPlayerList().getPlayers().forEach(player -> {
                 if (player instanceof Audience audience) {
                     audience.sendMessage(components);
@@ -94,7 +94,7 @@ public class CatMessengerMod {
         messenger.sendMessage(new Message(config.getName(), content));
     }
 
-    public void sendMessage(cx.rain.mc.catmessenger.api.message.Player player, net.kyori.adventure.text.Component component) {
+    public void sendMessage(cx.rain.mc.catmessenger.api.model.Player player, net.kyori.adventure.text.Component component) {
         var content = ComponentSerializer.toMiniMessage(component);
         messenger.sendMessage(new Message(config.getName(), player, content));
     }

@@ -7,10 +7,10 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import cx.rain.mc.catmessenger.api.CatMessenger;
-import cx.rain.mc.catmessenger.api.message.Message;
+import cx.rain.mc.catmessenger.api.model.Message;
 import cx.rain.mc.catmessenger.api.utilities.ComponentSerializer;
 import cx.rain.mc.catmessenger.api.utilities.MessageFactory;
-import cx.rain.mc.catmessenger.api.utilities.MessageParser;
+import cx.rain.mc.catmessenger.api.utilities.ComponentParser;
 import cx.rain.mc.catmessenger.velocity.config.ConfigManager;
 import net.kyori.adventure.text.Component;
 import org.slf4j.Logger;
@@ -29,16 +29,15 @@ public final class CatMessengerVelocity {
     public CatMessengerVelocity(Logger logger, @DataDirectory Path dataDirectory) {
         this.logger = logger;
 
-        this.config = new ConfigManager(logger, dataDirectory);
+        this.config = new ConfigManager(dataDirectory);
 
         this.messenger = new CatMessenger(config.get().getId(),
                 config.get().getRabbitMQ().getHost(), config.get().getRabbitMQ().getPort(),
                 config.get().getRabbitMQ().getUsername(), config.get().getRabbitMQ().getPassword(),
-                config.get().getRabbitMQ().getVirtualHost(),
-                config.get().getRabbitMQ().getMaxRetry(), config.get().getRabbitMQ().getRetryIntervalMillis());
+                config.get().getRabbitMQ().getVirtualHost());
 
-        this.messenger.consumeMessage(message -> {
-            var component = MessageParser.parseFrom(message);
+        this.messenger.getMessage().handler(message -> {
+            var component = ComponentParser.parseFrom(message);
             logger.info(ComponentSerializer.toPlain(component));
         });
     }
@@ -60,7 +59,7 @@ public final class CatMessengerVelocity {
     }
 
     public void sendMessage(Component component) {
-        var content = ComponentSerializer.toMiniMessage(component);
-        messenger.sendMessage(new Message(config.get().getName(), content));
+        var content = ComponentSerializer.toLegacy(component);
+        messenger.getMessage().publish(new Message(config.get().getName(), content));
     }
 }

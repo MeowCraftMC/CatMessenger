@@ -1,4 +1,4 @@
-package cx.rain.mc.catmessenger.api.message;
+package cx.rain.mc.catmessenger.api.model;
 
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,12 +25,12 @@ public class Message implements Serializable {
     }
 
     public Message(String platform, Player sender, String content) {
-        this(platform, sender, content, ZonedDateTime.now());
+        this(platform, sender, content, OffsetDateTime.now());
     }
 
     /**
-     * Displaying platform name.
-     * Legacy format supported. (Use & as shift symbol, and &#FFFFFF for hex colors.)
+     * Displaying platform name. <br/>
+     * Legacy format. See {@link Message#content}
      */
     String platform;
 
@@ -41,13 +41,13 @@ public class Message implements Serializable {
     Player sender;
 
     /**
-     * Displaying message content.
-     * MiniMessage format.
+     * Displaying message content. <br/>
+     * Legacy format. (Use & as shift symbol, and &#FFFFFF for hex colors.)
      */
     String content;
 
     /**
      * Send time.
      */
-    ZonedDateTime time;
+    OffsetDateTime time;
 }
