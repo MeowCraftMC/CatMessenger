@@ -1,0 +1,11 @@
+id: 'server1'
+name: 'ExampleMinecraftServer'
+
+# RabbitMQ connect info
+connector:
+  host: 'localhost'
+  port: 5672
+  virtualHost: '/minecraft'
+  username: 'guest'
+  password: 'guest'
+  maxRetry: 5

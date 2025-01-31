@@ -1,0 +1,24 @@
+plugins {
+    id 'xyz.jpenilla.run-waterfall'
+}
+
+version = rootProject.version
+
+dependencies {
+    compileOnly "io.github.waterfallmc:waterfall-api:${waterfall_api_version}"
+
+    implementation project(path: ':common', configuration: 'shadow')
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('bungee.yml') {
+        expand props
+    }
+}
+
+runWaterfall {
+    waterfallVersion waterfall_runtime_version
+}
