@@ -60,7 +60,7 @@ public final class CatMessengerVelocity {
 
     public void sendMessage(Component component) {
         logger.info(ComponentSerializer.toPlain(component));
-        var content = ComponentSerializer.toLegacy(component);
+        var content = ComponentSerializer.toJson(component);
         this.messenger.getMessage().publish(new Message(config.get().getName(), content));
     }
 }

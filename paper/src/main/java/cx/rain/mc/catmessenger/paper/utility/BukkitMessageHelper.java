@@ -10,7 +10,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 public class BukkitMessageHelper {
 
     public static Player createPlayer(org.bukkit.entity.Player player) {
-        return new Player(player.getName(), player.getUniqueId(), ComponentSerializer.toLegacy(player.displayName()));
+        return new Player(player.getName(), player.getUniqueId(), ComponentSerializer.toJson(player.displayName()));
     }
 
     public static Component playerAdvancement(Player player, Component title, Component description, AdvancementDisplay.Frame frame) {
@@ -24,13 +24,13 @@ public class BukkitMessageHelper {
         result = result.append(Component.text(text));
 
         var color = switch (frame) {
-            case CHALLENGE -> NamedTextColor.GREEN;
+            case CHALLENGE -> NamedTextColor.DARK_PURPLE;
             case GOAL -> NamedTextColor.AQUA;
-            case TASK -> NamedTextColor.DARK_PURPLE;
+            case TASK -> NamedTextColor.GREEN;
         };
 
-        return result.append(Component.text("[" + title.toString() + "]")
+        return result.append(Component.text("[" + ComponentSerializer.toPlain(title) + "]")
                         .color(color))
-                .hoverEvent(Component.text(description.toString()));
+                .hoverEvent(Component.text(ComponentSerializer.toPlain(description)));
     }
 }

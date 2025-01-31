@@ -30,19 +30,22 @@ public class Message implements Serializable {
 
     /**
      * Displaying platform name. <br/>
-     * Legacy format. See {@link Message#content}
+     * Json format.
+     *
+     * @see Message#content
      */
     String platform;
 
     /**
      * Displaying message sender.
      */
-    @Nullable
-    Player sender;
+    @Nullable Player sender;
 
     /**
      * Displaying message content. <br/>
-     * Legacy format. (Use & as shift symbol, and &#FFFFFF for hex colors.)
+     * Json format.
+     *
+     * @see <a href="https://zh.minecraft.wiki/w/%E6%96%87%E6%9C%AC%E7%BB%84%E4%BB%B6">Text Component - Minecraft Wiki</a>
      */
     String content;
 

@@ -18,7 +18,7 @@ public class MessengerHelper {
     private static void sendInternal(Player player, Component content) {
         var plugin = CatMessengerPaper.getInstance();
         var platform = plugin.getConfigManager().getName();
-        var message = new Message(platform, player, ComponentSerializer.toLegacy(content));
+        var message = new Message(platform, player, ComponentSerializer.toJson(content));
         plugin.getMessenger().getMessage().publish(message);
     }
 }

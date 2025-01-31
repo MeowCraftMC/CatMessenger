@@ -10,7 +10,7 @@ import net.minecraft.advancements.DisplayInfo;
 
 public class ModMessengerHelper {
     public static Player createPlayer(net.minecraft.world.entity.player.Player player) {
-        return new Player(player.getName().getString(), player.getUUID(), ComponentSerializer.toLegacy(toComponent(player.getDisplayName())));
+        return new Player(player.getName().getString(), player.getUUID(), ComponentSerializer.toJson(toComponent(player.getDisplayName())));
     }
 
     public static Component toComponent(net.minecraft.network.chat.Component component) {

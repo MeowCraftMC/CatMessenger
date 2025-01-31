@@ -52,6 +52,7 @@ public abstract class AbstractNotify<MESSAGE> extends AbstractQueue {
     public void publish(MESSAGE message) {
         Thread.startVirtualThread(() -> {
             var json = GSON.toJson(message);
+            System.out.println(message);
             var bytes = json.getBytes(StandardCharsets.UTF_8);
             publish(bytes);
         });

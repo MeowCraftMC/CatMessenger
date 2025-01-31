@@ -47,19 +47,24 @@ public class Player implements Serializable {
 
     /**
      * Displaying name. <br/>
-     * Legacy format. See {@link Message#content}
+     *
+     * @see Message#content
      */
     @Nullable
     String name;
 
     /**
-     * Legacy format. See {@link Message#content}
+     * Json format.
+     *
+     * @see Message#content
      */
     @Nullable
     String prefix;
 
     /**
-     * Legacy format. See {@link Message#content}
+     * Json format.
+     *
+     * @see Message#content
      */
     @Nullable
     String suffix;

@@ -89,12 +89,12 @@ public class CatMessengerMod {
     }
 
     public void sendMessage(net.kyori.adventure.text.Component component) {
-        var content = ComponentSerializer.toLegacy(component);
+        var content = ComponentSerializer.toJson(component);
         messenger.getMessage().publish(new Message(config.getName(), content));
     }
 
     public void sendMessage(cx.rain.mc.catmessenger.api.model.Player player, net.kyori.adventure.text.Component component) {
-        var content = ComponentSerializer.toLegacy(component);
+        var content = ComponentSerializer.toJson(component);
         messenger.getMessage().publish(new Message(config.getName(), player, content));
     }
 }
