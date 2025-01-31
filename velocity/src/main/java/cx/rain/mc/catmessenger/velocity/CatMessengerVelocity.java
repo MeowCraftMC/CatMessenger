@@ -44,7 +44,7 @@ public final class CatMessengerVelocity {
 
     @Subscribe
     public void onProxyInit(ProxyInitializeEvent event) {
-        messenger.connect();
+        this.messenger.connect();
 
         sendMessage(MessageFactory.serverOnline(true));
         logger.info("Loaded!");
@@ -54,12 +54,13 @@ public final class CatMessengerVelocity {
     public void onProxyShutdown(ProxyShutdownEvent event) {
         sendMessage(MessageFactory.serverOffline(true));
 
-        messenger.disconnect();
+        this.messenger.disconnect();
         logger.info("Bye~");
     }
 
     public void sendMessage(Component component) {
+        logger.info(ComponentSerializer.toPlain(component));
         var content = ComponentSerializer.toLegacy(component);
-        messenger.getMessage().publish(new Message(config.get().getName(), content));
+        this.messenger.getMessage().publish(new Message(config.get().getName(), content));
     }
 }

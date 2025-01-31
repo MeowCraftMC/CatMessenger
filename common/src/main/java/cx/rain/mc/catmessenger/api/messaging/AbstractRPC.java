@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public abstract class AbstractRPC extends AbstractQueue {
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractRPC.class);
@@ -19,7 +20,7 @@ public abstract class AbstractRPC extends AbstractQueue {
     protected final Map<String, IMessage<IRequest, IResponse>> messagesById = new HashMap<>();
     protected final Map<Class<IRequest>, IMessage<IRequest, IResponse>> messagesByRequest = new HashMap<>();
 
-    public AbstractRPC(String id, Connection connection) {
+    public AbstractRPC(String id, Supplier<Connection> connection) {
         super(id, connection);
     }
 
@@ -76,23 +77,25 @@ public abstract class AbstractRPC extends AbstractQueue {
         @Override
         public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
                                    byte[] body) throws IOException {
-            var str = new String(body, StandardCharsets.UTF_8);
-            // Todo: Deserialize id and args.
-//            var message = queue.getGson().fromJson(str, queue.messageType);
-
-//            if (message == null) {
-//                queue.ack(envelope.getDeliveryTag());
-//                return;
-//            }
+            Thread.startVirtualThread(() -> {
+                var str = new String(body, StandardCharsets.UTF_8);
+                // Todo: Deserialize id and args.
+//                var message = queue.getGson().fromJson(str, queue.messageType);
 //
-//            for (var handler : queue.handlers) {
-//                try {
-//                    handler.handle(message);
-//                } catch (Exception ex) {
-//                    LOGGER.error("Error handling message: \n{}\n{}", message, ex);
+//                if (message == null) {
+//                    queue.ack(envelope.getDeliveryTag());
+//                    return;
 //                }
-//            }
-//            queue.ack(envelope.getDeliveryTag());
+//
+//                for (var handler : queue.handlers) {
+//                    try {
+//                        handler.handle(message);
+//                    } catch (Exception ex) {
+//                        LOGGER.error("Error handling message: \n{}\n{}", message, ex);
+//                    }
+//                }
+//                queue.ack(envelope.getDeliveryTag());
+            });
         }
     }
 }

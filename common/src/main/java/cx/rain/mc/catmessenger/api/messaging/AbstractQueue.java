@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 
 public abstract class AbstractQueue {
 
@@ -18,7 +19,7 @@ public abstract class AbstractQueue {
 
     @Getter
     private final String clientId;
-    private final Connection connection;
+    private final Supplier<Connection> connection;
 
     @Getter
     private Channel channel;
@@ -26,7 +27,7 @@ public abstract class AbstractQueue {
     @Getter
     private boolean closed = true;
 
-    public AbstractQueue(String clientId, Connection connection) {
+    public AbstractQueue(String clientId, Supplier<Connection> connection) {
         this.clientId = clientId;
         this.connection = connection;
     }
@@ -44,7 +45,7 @@ public abstract class AbstractQueue {
     @SneakyThrows
     public void connect() {
         if (channel == null) {
-            channel = connection.createChannel();
+            channel = connection.get().createChannel();
         }
 
         closed = false;
@@ -58,10 +59,12 @@ public abstract class AbstractQueue {
 
     @SneakyThrows
     public void disconnect() {
-        closed = true;
+        if (!closed) {
+            closed = true;
 
-        if (channel.isOpen()) {
-            channel.close();
+            if (channel.isOpen()) {
+                channel.close();
+            }
         }
     }
 

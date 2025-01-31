@@ -3,7 +3,6 @@ package cx.rain.mc.catmessenger.velocity.config;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import org.slf4j.Logger;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;

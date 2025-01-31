@@ -23,22 +23,21 @@ public final class CatMessengerPaper extends JavaPlugin {
     public CatMessengerPaper() {
         INSTANCE = this;
 
-        messenger = new CatMessenger(configManager.getId(),
+        this.messenger = new CatMessenger(configManager.getId(),
                 configManager.getRabbitMQHost(), configManager.getRabbitMQPort(),
                 configManager.getRabbitMQUsername(), configManager.getRabbitMQPassword(),
                 configManager.getRabbitMQVirtualHost());
 
-        messenger.getMessage().handler(message -> Bukkit.getScheduler()
+        this.messenger.getMessage().handler(message -> Bukkit.getScheduler()
                 .scheduleSyncDelayedTask(CatMessengerPaper.getInstance(), () -> {
                     var component = ComponentParser.parseFrom(message);
                     Bukkit.broadcast(component);
-                    CatMessengerPaper.getInstance().getLogger().info(ComponentSerializer.toPlain(component));
                 }));
     }
 
     @Override
     public void onEnable() {
-        messenger.connect();
+        this.messenger.connect();
 
         getServer().getPluginManager().registerEvents(new AsyncPlayerChatHandler(), this);
         getServer().getPluginManager().registerEvents(new PlayerEventHandler(), this);
@@ -50,7 +49,7 @@ public final class CatMessengerPaper extends JavaPlugin {
     @Override
     public void onDisable() {
         MessengerHelper.send(MessageFactory.serverOffline());
-        messenger.disconnect();
+        this.messenger.disconnect();
 
         getSLF4JLogger().info("CatMessenger unloaded.");
     }

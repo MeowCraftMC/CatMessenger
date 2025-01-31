@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public abstract class AbstractNotify<MESSAGE> extends AbstractQueue {
     protected static final Gson GSON = new GsonBuilder()
@@ -28,7 +29,7 @@ public abstract class AbstractNotify<MESSAGE> extends AbstractQueue {
 
     protected final List<IQueueHandler<MESSAGE>> handlers = new ArrayList<>();
 
-    public AbstractNotify(String clientId, Connection connection, Class<MESSAGE> messageType) {
+    public AbstractNotify(String clientId, Supplier<Connection> connection, Class<MESSAGE> messageType) {
         super(clientId, connection);
         this.messageType = messageType;
     }
@@ -49,9 +50,11 @@ public abstract class AbstractNotify<MESSAGE> extends AbstractQueue {
     }
 
     public void publish(MESSAGE message) {
-        var json = GSON.toJson(message);
-        var bytes = json.getBytes(StandardCharsets.UTF_8);
-        publish(bytes);
+        Thread.startVirtualThread(() -> {
+            var json = GSON.toJson(message);
+            var bytes = json.getBytes(StandardCharsets.UTF_8);
+            publish(bytes);
+        });
     }
 
     public void handler(IQueueHandler<MESSAGE> handler) {
@@ -74,23 +77,25 @@ public abstract class AbstractNotify<MESSAGE> extends AbstractQueue {
         @Override
         public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
                                    byte[] body) throws IOException {
-            var str = new String(body, StandardCharsets.UTF_8);
-            var message = GSON.fromJson(str, queue.messageType);
+            Thread.startVirtualThread(() -> {
+                var str = new String(body, StandardCharsets.UTF_8);
+                var message = GSON.fromJson(str, queue.messageType);
 
-            if (message == null) {
-                queue.ack(envelope.getDeliveryTag());
-                return;
-            }
-
-            for (var handler : queue.handlers) {
-                try {
-                    handler.handle(message);
-                } catch (Exception ex) {
-                    LOGGER.error("Error handling message: \n{}\n{}", message, ex);
+                if (message == null) {
+                    queue.ack(envelope.getDeliveryTag());
+                    return;
                 }
-            }
 
-            queue.ack(envelope.getDeliveryTag());
+                for (var handler : queue.handlers) {
+                    try {
+                        handler.handle(message);
+                    } catch (Exception ex) {
+                        LOGGER.error("Error handling message: \n{}\n{}", message, ex);
+                    }
+                }
+
+                queue.ack(envelope.getDeliveryTag());
+            });
         }
     }
 }

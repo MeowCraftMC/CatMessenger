@@ -15,10 +15,11 @@ public class CatMessenger {
     private final String clientId;
     private final ConnectionFactory factory;
 
+    @Getter
     private Connection connection;
 
     @Getter
-    private AbstractNotify<Message> message;
+    private final AbstractNotify<Message> message;
 
     public CatMessenger(String clientId,
                         String host, int port, String username, String password, String virtualHost) {
@@ -31,13 +32,8 @@ public class CatMessenger {
         this.factory.setUsername(username);
         this.factory.setPassword(password);
         this.factory.setAutomaticRecoveryEnabled(true);
-    }
 
-    @SneakyThrows
-    public void connect() {
-        connection = factory.newConnection();
-
-        message = new AbstractNotify<>(clientId, connection, Message.class) {
+        this.message = new AbstractNotify<>(clientId, this::getConnection, Message.class) {
             @Override
             protected String getExchangeName() {
                 return "fanout.exchange.messages";
@@ -48,6 +44,12 @@ public class CatMessenger {
                 return "fanout.queue." + clientId;
             }
         };
+    }
+
+    @SneakyThrows
+    public void connect() {
+        connection = factory.newConnection();
+        message.connect();
     }
 
     public void disconnect() {
