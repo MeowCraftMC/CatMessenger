@@ -52,7 +52,7 @@ public abstract class AbstractQueue {
         closed = false;
 
         channel.exchangeDeclare(getExchangeName(), getExchangeType(), true, false, null);
-        channel.queueDeclare(getQueueName(), true, false, true, null);
+        channel.queueDeclare(getQueueName(), true, true, true, null);
         channel.queueBind(getQueueName(), getExchangeName(), getRoutingKey());
 
         channel.basicConsume(getQueueName(), false, createConsumer());
@@ -90,13 +90,13 @@ public abstract class AbstractQueue {
                 return;
             } catch (IOException ex) {
                 retried += 1;
-                LOGGER.warn("Publish failed, retrying({}/5) {}", retried, ex);
+                LOGGER.warn("Publish failed, retrying({}/{}) {}", retried, MAX_RETRY, ex);
             }
         }
         LOGGER.error("All publish retries failed!");
     }
 
-    protected void ack(long deliveryKey) {
+    protected void ack(long deliveryTag) {
         var retried = 0;
         while (retried <= MAX_RETRY) {
             try {
@@ -112,11 +112,11 @@ public abstract class AbstractQueue {
                     getChannel().basicRecover();
                 }
 
-                getChannel().basicAck(deliveryKey, false);
+                getChannel().basicAck(deliveryTag, false);
                 return;
             } catch (IOException ex) {
                 retried += 1;
-                LOGGER.warn("Ack failed, retrying({}/5) {}", retried, ex);
+                LOGGER.warn("Ack failed, retrying({}/{}}) {}", retried, MAX_RETRY, ex);
             }
         }
         LOGGER.error("All ack retries failed!");
