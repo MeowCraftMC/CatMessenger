@@ -15,7 +15,7 @@ Server Side Public License (SSPL) Version 1
 ### 前置条件
 
 1. RabbitMQ
-2. Java Runtime
+2. Java 21
 
 #### RabbitMQ
 
@@ -40,9 +40,9 @@ services:
       RABBITMQ_DEFAULT_VHOST: /minecraft
 ```
 
-#### java
+#### Java
 
-本工具编译版本要求 >= jdk17，建议runtime也不要低于这个版本喵。
+由于本程序使用了 Java 21 提供的特性，所以只支持 Java 21 及以上版本运行。
 
 ### 使用
 
