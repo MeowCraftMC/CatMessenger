@@ -34,7 +34,7 @@ public class Player implements Serializable {
     /**
      * Sender id in the specific platform. <br/>
      * Literal string. <br/>
-     * For Telegram: without the heading @.
+     * For Telegram: the username without the heading @ if set, otherwise the long id.
      */
     String id;
 
