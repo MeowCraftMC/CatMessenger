@@ -12,7 +12,7 @@ public class MessageFactory {
     }
 
     public static Component serverOnline(boolean bold) {
-        return Component.text("服务器上线了").color(NamedTextColor.YELLOW).decoration(TextDecoration.BOLD, bold);
+        return Component.text(" 服务器上线了").color(NamedTextColor.YELLOW).decoration(TextDecoration.BOLD, bold);
     }
 
     public static Component serverOffline() {
@@ -20,20 +20,20 @@ public class MessageFactory {
     }
 
     public static Component serverOffline(boolean bold) {
-        return Component.text("服务器离线了").color(NamedTextColor.YELLOW).decoration(TextDecoration.BOLD, bold);
+        return Component.text(" 服务器离线了").color(NamedTextColor.YELLOW).decoration(TextDecoration.BOLD, bold);
     }
 
     public static Component playerJoined(Player player) {
         return Component.empty()
                 .append(ComponentParser.parsePlayer(player))
-                .append(Component.text("登入了服务器"))
+                .append(Component.text(" 登入了服务器"))
                 .color(NamedTextColor.YELLOW);
     }
 
     public static Component playerLeft(Player player) {
         return Component.empty()
                 .append(ComponentParser.parsePlayer(player))
-                .append(Component.text("登出了服务器"))
+                .append(Component.text(" 登出了服务器"))
                 .color(NamedTextColor.YELLOW);
     }
 }

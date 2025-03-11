@@ -28,8 +28,10 @@ public class ComponentParser {
     }
 
     private static Component parsePlatform(String platform) {
-        return text("[" + fromJson(platform) + "] ")
-                .color(NamedTextColor.GREEN);
+        return text("[")
+                .color(NamedTextColor.GREEN)
+                .append(fromJson(platform))
+                .append(text("] "));
     }
 
     private static Component parseSender(Player player) {
