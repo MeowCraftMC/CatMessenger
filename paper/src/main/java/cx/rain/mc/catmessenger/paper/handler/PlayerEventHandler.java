@@ -1,8 +1,10 @@
 package cx.rain.mc.catmessenger.paper.handler;
 
+import cx.rain.mc.catmessenger.api.utilities.ComponentSerializer;
 import cx.rain.mc.catmessenger.api.utilities.MessageFactory;
 import cx.rain.mc.catmessenger.paper.utility.MessengerHelper;
 import cx.rain.mc.catmessenger.paper.utility.BukkitMessageHelper;
+import net.kyori.adventure.text.Component;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -35,7 +37,8 @@ public class PlayerEventHandler implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
-        var message = event.deathMessage();
-        MessengerHelper.send(message);
+        var message = ComponentSerializer.toPlain(event.deathMessage());
+        var component = Component.text(message);
+        MessengerHelper.send(component);
     }
 }
