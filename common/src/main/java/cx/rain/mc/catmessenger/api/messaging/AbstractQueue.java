@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 public abstract class AbstractQueue {
@@ -24,6 +25,9 @@ public abstract class AbstractQueue {
 
     @Getter
     private Channel channel;
+
+    @Getter
+    private AtomicBoolean blocking = new AtomicBoolean(false);
 
     @Getter
     private boolean closed = true;
@@ -58,9 +62,21 @@ public abstract class AbstractQueue {
         channel.basicConsume(getQueueName(), false, createConsumer());
     }
 
+    protected void block() {
+        blocking.set(true);
+    }
+
+    protected void release() {
+        blocking.set(false);
+    }
+
     @SneakyThrows
     public void disconnect() {
         if (!closed) {
+//            while (blocking.get()) {
+//                // Block until blocked.
+//            }
+
             closed = true;
 
             if (channel.isOpen()) {
