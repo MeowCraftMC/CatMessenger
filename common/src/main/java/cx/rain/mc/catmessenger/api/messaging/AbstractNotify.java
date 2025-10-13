@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.rabbitmq.client.*;
+import cx.rain.mc.catmessenger.api.CatMessenger;
 import cx.rain.mc.catmessenger.api.utilities.serializer.OffsetDateTimeTypeAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -29,8 +30,8 @@ public abstract class AbstractNotify<MESSAGE> extends AbstractQueue {
 
     protected final List<IQueueHandler<MESSAGE>> handlers = new ArrayList<>();
 
-    public AbstractNotify(String clientId, Supplier<Connection> connection, Class<MESSAGE> messageType) {
-        super(clientId, connection);
+    public AbstractNotify(CatMessenger messenger, Class<MESSAGE> messageType) {
+        super(messenger);
         this.messageType = messageType;
     }
 
@@ -50,11 +51,9 @@ public abstract class AbstractNotify<MESSAGE> extends AbstractQueue {
     }
 
     public void publish(MESSAGE message) {
-        Thread.startVirtualThread(() -> {
-            var json = GSON.toJson(message);
-            var bytes = json.getBytes(StandardCharsets.UTF_8);
-            publish(bytes);
-        });
+        var json = GSON.toJson(message);
+        var bytes = json.getBytes(StandardCharsets.UTF_8);
+        publish(bytes);
     }
 
     public void handler(IQueueHandler<MESSAGE> handler) {
@@ -78,7 +77,7 @@ public abstract class AbstractNotify<MESSAGE> extends AbstractQueue {
         public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
                                    byte[] body) throws IOException {
             Thread.startVirtualThread(() -> {
-                if (queue.getClientId().equals(properties.getAppId())) {
+                if (queue.messenger.getClientId().equals(properties.getAppId())) {
                     queue.ack(envelope.getDeliveryTag());
                     return;
                 }

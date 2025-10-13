@@ -2,6 +2,7 @@ package cx.rain.mc.catmessenger.api.messaging;
 
 import com.google.gson.Gson;
 import com.rabbitmq.client.*;
+import cx.rain.mc.catmessenger.api.CatMessenger;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +13,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 public abstract class AbstractRPC extends AbstractQueue {
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractRPC.class);
@@ -20,8 +20,8 @@ public abstract class AbstractRPC extends AbstractQueue {
     protected final Map<String, IMessage<IRequest, IResponse>> messagesById = new HashMap<>();
     protected final Map<Class<IRequest>, IMessage<IRequest, IResponse>> messagesByRequest = new HashMap<>();
 
-    public AbstractRPC(String id, Supplier<Connection> connection) {
-        super(id, connection);
+    public AbstractRPC(CatMessenger messenger) {
+        super(messenger);
     }
 
     protected abstract Gson getGson();

@@ -1,6 +1,7 @@
 id: 'example1'
 name: 'ExampleMinecraftServer'
 rabbitmq:
+  enable: false
   host: 'localhost'
   port: 5672
   username: 'guest'

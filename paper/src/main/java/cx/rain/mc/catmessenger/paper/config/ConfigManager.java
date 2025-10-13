@@ -20,6 +20,10 @@ public class ConfigManager {
         return config.getString("name");
     }
 
+    public boolean isRabbitMQEnabled() {
+        return config.getBoolean("rabbitmq.enable", false);
+    }
+
     public String getRabbitMQHost() {
         return config.getString("rabbitmq.host");
     }

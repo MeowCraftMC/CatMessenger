@@ -2,8 +2,9 @@ package cx.rain.mc.catmessenger.api.messaging;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Consumer;
+import cx.rain.mc.catmessenger.api.CatMessenger;
+import cx.rain.mc.catmessenger.api.utilities.RetryingUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -11,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Supplier;
 
 public abstract class AbstractQueue {
 
@@ -19,22 +19,17 @@ public abstract class AbstractQueue {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractQueue.class);
 
-    @Getter
-    private final String clientId;
-    private final Supplier<Connection> connection;
+    protected final CatMessenger messenger;
 
     @Getter
     private Channel channel;
 
+    // Todo: use future, close after send failed.
     @Getter
-    private AtomicBoolean blocking = new AtomicBoolean(false);
+    private AtomicBoolean sending = new AtomicBoolean(false);
 
-    @Getter
-    private boolean closed = true;
-
-    public AbstractQueue(String clientId, Supplier<Connection> connection) {
-        this.clientId = clientId;
-        this.connection = connection;
+    public AbstractQueue(CatMessenger messenger) {
+        this.messenger = messenger;
     }
 
     protected abstract Consumer createConsumer();
@@ -50,10 +45,12 @@ public abstract class AbstractQueue {
     @SneakyThrows
     public void connect() {
         if (channel == null) {
-            channel = connection.get().createChannel();
+            var connection = messenger.getConnection();
+            if (connection == null) {
+                throw new IllegalStateException("Connection is null");
+            }
+            channel = connection.createChannel();
         }
-
-        closed = false;
 
         channel.exchangeDeclare(getExchangeName(), getExchangeType(), true, false, null);
         channel.queueDeclare(getQueueName(), true, true, true, null);
@@ -62,79 +59,81 @@ public abstract class AbstractQueue {
         channel.basicConsume(getQueueName(), false, createConsumer());
     }
 
-    protected void block() {
-        blocking.set(true);
-    }
-
-    protected void release() {
-        blocking.set(false);
+    protected void setSending(boolean value) {
+        sending.set(value);
     }
 
     @SneakyThrows
     public void disconnect() {
-        if (!closed) {
-//            while (blocking.get()) {
-//                // Block until blocked.
-//            }
-
-            closed = true;
-
-            if (channel.isOpen()) {
-                channel.close();
-            }
+        if (channel.isOpen()) {
+            channel.close();
         }
     }
 
     protected void publish(byte[] bytes) {
-        var retried = 0;
-        while (retried <= MAX_RETRY) {
-            try {
-                if (isClosed()) {
-                    return;
-                }
-
-                if (getChannel() == null) {
-                    connect();
-                }
-
-                if (!getChannel().isOpen()) {
-                    getChannel().basicRecover();
-                }
-
-                var props = new AMQP.BasicProperties.Builder().appId(clientId).build();
-                getChannel().basicPublish(getExchangeName(), getRoutingKey(), props, bytes);
-                return;
-            } catch (IOException ex) {
-                retried += 1;
-                LOGGER.warn("Publish failed, retrying({}/{}) {}", retried, MAX_RETRY, ex);
-            }
-        }
-        LOGGER.error("All publish retries failed!");
+        RetryingUtil.runWithRetry(() -> {
+                    try {
+                        setSending(true);
+                        publishInternal(bytes);
+                        return true;
+                    } catch (IOException ex) {
+                        LOGGER.warn("Publish failed", ex);
+                        return false;
+                    }
+                },
+                MAX_RETRY,
+                () -> setSending(false),
+                (tries) -> LOGGER.warn("Publish failed, retrying({}/{})", tries, MAX_RETRY),
+                () -> LOGGER.error("All publish retries failed!"));
     }
 
     protected void ack(long deliveryTag) {
-        var retried = 0;
-        while (retried <= MAX_RETRY) {
-            try {
-                if (isClosed()) {
-                    return;
-                }
+        RetryingUtil.runWithRetry(() -> {
+                    try {
+                        ackInternal(deliveryTag);
+                        return true;
+                    } catch (IOException ex) {
+                        LOGGER.warn("Ack failed", ex);
+                        return false;
+                    }
+                },
+                MAX_RETRY,
+                () -> {
+                },
+                (tries) -> LOGGER.warn("Ack failed, retrying({}/{}})", tries, MAX_RETRY),
+                () -> LOGGER.error("All ack retries failed!"));
+    }
 
-                if (getChannel() == null) {
-                    connect();
-                }
-
-                if (!getChannel().isOpen()) {
-                    getChannel().basicRecover();
-                }
-
-                getChannel().basicAck(deliveryTag, false);
-                return;
-            } catch (IOException ex) {
-                retried += 1;
-                LOGGER.warn("Ack failed, retrying({}/{}}) {}", retried, MAX_RETRY, ex);
-            }
+    private void publishInternal(byte[] bytes) throws IOException {
+        if (!messenger.isConnected()) {
+            return;
         }
-        LOGGER.error("All ack retries failed!");
+
+        if (getChannel() == null) {
+            connect();
+        }
+
+        if (!getChannel().isOpen()) {
+            getChannel().basicRecover();
+        }
+
+        var props = new AMQP.BasicProperties.Builder().appId(messenger.getClientId()).build();
+        getChannel().basicPublish(getExchangeName(), getRoutingKey(), props, bytes);
+    }
+
+    private void ackInternal(long deliveryTag) throws IOException {
+        if (!messenger.isConnected()) {
+            return;
+        }
+
+        if (getChannel() == null) {
+            connect();
+        }
+
+        if (!getChannel().isOpen()) {
+            getChannel().basicRecover();
+        }
+
+        getChannel().basicAck(deliveryTag, false);
     }
 }

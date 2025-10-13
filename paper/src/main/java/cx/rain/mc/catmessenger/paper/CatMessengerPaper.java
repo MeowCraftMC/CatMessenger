@@ -6,6 +6,7 @@ import cx.rain.mc.catmessenger.api.utilities.MessageFactory;
 import cx.rain.mc.catmessenger.api.utilities.ComponentParser;
 import cx.rain.mc.catmessenger.paper.config.ConfigManager;
 import cx.rain.mc.catmessenger.paper.handler.AsyncPlayerChatHandler;
+import cx.rain.mc.catmessenger.paper.handler.EntityEventHandler;
 import cx.rain.mc.catmessenger.paper.handler.PlayerEventHandler;
 import cx.rain.mc.catmessenger.paper.utility.MessengerHelper;
 import lombok.Getter;
@@ -37,10 +38,13 @@ public final class CatMessengerPaper extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        this.messenger.connect();
+        if (configManager.isRabbitMQEnabled()) {
+            this.messenger.connect();
+        }
 
         getServer().getPluginManager().registerEvents(new AsyncPlayerChatHandler(), this);
         getServer().getPluginManager().registerEvents(new PlayerEventHandler(), this);
+        getServer().getPluginManager().registerEvents(new EntityEventHandler(), this);
 
         MessengerHelper.send(MessageFactory.serverOnline());
         getSLF4JLogger().info("CatMessenger loaded.");
@@ -49,7 +53,10 @@ public final class CatMessengerPaper extends JavaPlugin {
     @Override
     public void onDisable() {
         MessengerHelper.send(MessageFactory.serverOffline());
-        this.messenger.disconnect();
+
+        if (configManager.isRabbitMQEnabled()) {
+            this.messenger.disconnect();
+        }
 
         getSLF4JLogger().info("CatMessenger unloaded.");
     }

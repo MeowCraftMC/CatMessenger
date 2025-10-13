@@ -12,11 +12,16 @@ import org.slf4j.LoggerFactory;
 public class CatMessenger {
     private static final Logger LOGGER = LoggerFactory.getLogger(CatMessenger.class);
 
+    @Getter
     private final String clientId;
+
     private final ConnectionFactory factory;
 
     @Getter
     private Connection connection;
+
+    @Getter
+    private boolean connected;
 
     @Getter
     private final AbstractNotify<Message> message;
@@ -33,7 +38,7 @@ public class CatMessenger {
         this.factory.setPassword(password);
         this.factory.setAutomaticRecoveryEnabled(true);
 
-        this.message = new AbstractNotify<>(clientId, this::getConnection, Message.class) {
+        this.message = new AbstractNotify<>(this, Message.class) {
             @Override
             protected String getExchangeName() {
                 return "fanout.exchange.messages";
@@ -50,9 +55,12 @@ public class CatMessenger {
     public void connect() {
         connection = factory.newConnection();
         message.connect();
+
+        connected = true;
     }
 
     public void disconnect() {
         message.disconnect();
+        connected = false;
     }
 }

@@ -6,6 +6,7 @@ import cx.rain.mc.catmessenger.api.utilities.ComponentParser;
 import cx.rain.mc.catmessenger.api.utilities.ComponentSerializer;
 import cx.rain.mc.catmessenger.paper.CatMessengerPaper;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 
 public class MessengerHelper {
     public static void send(Component content) {
@@ -22,6 +23,8 @@ public class MessengerHelper {
         var message = new Message(platform, player, ComponentSerializer.toJson(content));
         var component = ComponentParser.parseFrom(message);
         plugin.getComponentLogger().info(component);
-        plugin.getMessenger().getMessage().publish(message);
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            plugin.getMessenger().getMessage().publish(message);
+        });
     }
 }
