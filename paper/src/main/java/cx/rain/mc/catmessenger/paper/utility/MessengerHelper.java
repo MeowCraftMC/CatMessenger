@@ -2,6 +2,7 @@ package cx.rain.mc.catmessenger.paper.utility;
 
 import cx.rain.mc.catmessenger.api.model.Message;
 import cx.rain.mc.catmessenger.api.model.Player;
+import cx.rain.mc.catmessenger.api.utilities.ComponentParser;
 import cx.rain.mc.catmessenger.api.utilities.ComponentSerializer;
 import cx.rain.mc.catmessenger.paper.CatMessengerPaper;
 import net.kyori.adventure.text.Component;
@@ -19,6 +20,8 @@ public class MessengerHelper {
         var plugin = CatMessengerPaper.getInstance();
         var platform = plugin.getConfigManager().getName();
         var message = new Message(platform, player, ComponentSerializer.toJson(content));
+        var component = ComponentParser.parseFrom(message);
+        plugin.getComponentLogger().info(component);
         plugin.getMessenger().getMessage().publish(message);
     }
 }

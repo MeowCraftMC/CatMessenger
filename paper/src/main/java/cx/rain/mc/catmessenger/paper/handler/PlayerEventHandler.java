@@ -37,6 +37,10 @@ public class PlayerEventHandler implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
         var message = ComponentSerializer.toPlain(event.deathMessage());
         var component = Component.text(message);
         MessengerHelper.send(component);

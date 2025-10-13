@@ -9,6 +9,10 @@ public class AsyncPlayerChatHandler implements Listener {
 
     @EventHandler
     public void onAsyncPlayerChat(AsyncChatEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
         var player = event.getPlayer();
         var content = event.message();
         MessengerHelper.send(player, content);
