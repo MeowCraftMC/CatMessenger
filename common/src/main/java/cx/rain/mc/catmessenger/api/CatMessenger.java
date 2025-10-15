@@ -21,7 +21,7 @@ public class CatMessenger {
     private Connection connection;
 
     @Getter
-    private boolean connected;
+    private boolean closing = false;
 
     @Getter
     private final AbstractNotify<Message> message;
@@ -53,14 +53,22 @@ public class CatMessenger {
 
     @SneakyThrows
     public void connect() {
+        if (closing || connection.isOpen()) {
+            return;
+        }
+
         connection = factory.newConnection();
         message.connect();
-
-        connected = true;
     }
 
     public void disconnect() {
-        message.disconnect();
-        connected = false;
+        if (!isConnected()) {
+            closing = true;
+            message.disconnect();
+        }
+    }
+
+    public boolean isConnected() {
+        return connection != null && connection.isOpen();
     }
 }

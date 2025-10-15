@@ -1,20 +1,26 @@
 package cx.rain.mc.catmessenger.api.utilities;
 
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.function.BiConsumer;
 
 public class RetryingUtil {
-    public static void runWithRetry(Supplier<Boolean> runnable, int maxRetry, Runnable onSucceed,
-                                    Consumer<Integer> onFailed, Runnable onAllAttemptFailed) {
+    public static void runWithRetry(Task runnable, int maxRetry, Runnable onSucceed,
+                                    BiConsumer<Throwable, Integer> onFailed, Runnable onAllAttemptFailed) {
         var tries = 0;
         while (tries <= maxRetry) {
-            if (runnable.get()) {
+            try {
+                runnable.run();
                 onSucceed.run();
                 return;
+            } catch (Throwable t) {
+                onFailed.accept(t, tries);
+                tries += 1;
             }
-            onFailed.accept(tries);
-            tries += 1;
         }
         onAllAttemptFailed.run();
+    }
+
+    @FunctionalInterface
+    public interface Task {
+        void run() throws Throwable;
     }
 }

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class AbstractQueue {
 
@@ -26,7 +27,7 @@ public abstract class AbstractQueue {
 
     // Todo: use future, close after send failed.
     @Getter
-    private AtomicBoolean sending = new AtomicBoolean(false);
+    private AtomicInteger sending = new AtomicInteger(0);
 
     public AbstractQueue(CatMessenger messenger) {
         this.messenger = messenger;
@@ -59,8 +60,12 @@ public abstract class AbstractQueue {
         channel.basicConsume(getQueueName(), false, createConsumer());
     }
 
-    protected void setSending(boolean value) {
-        sending.set(value);
+    protected void addSending() {
+        sending.getAndIncrement();
+    }
+
+    protected void removeSending() {
+        sending.getAndDecrement();
     }
 
     @SneakyThrows
@@ -72,40 +77,25 @@ public abstract class AbstractQueue {
 
     protected void publish(byte[] bytes) {
         RetryingUtil.runWithRetry(() -> {
-                    try {
-                        setSending(true);
-                        publishInternal(bytes);
-                        return true;
-                    } catch (IOException ex) {
-                        LOGGER.warn("Publish failed", ex);
-                        return false;
-                    }
+                    addSending();
+                    publishInternal(bytes);
                 },
                 MAX_RETRY,
-                () -> setSending(false),
-                (tries) -> LOGGER.warn("Publish failed, retrying({}/{})", tries, MAX_RETRY),
+                this::removeSending,
+                (ex, tries) -> LOGGER.warn("Publish failed, retrying({}/{}): {}", tries, MAX_RETRY, ex),
                 () -> LOGGER.error("All publish retries failed!"));
     }
 
     protected void ack(long deliveryTag) {
-        RetryingUtil.runWithRetry(() -> {
-                    try {
-                        ackInternal(deliveryTag);
-                        return true;
-                    } catch (IOException ex) {
-                        LOGGER.warn("Ack failed", ex);
-                        return false;
-                    }
-                },
+        RetryingUtil.runWithRetry(() -> ackInternal(deliveryTag),
                 MAX_RETRY,
-                () -> {
-                },
-                (tries) -> LOGGER.warn("Ack failed, retrying({}/{}})", tries, MAX_RETRY),
+                () -> {},
+                (ex, tries) -> LOGGER.warn("Ack failed, retrying({}/{}}): {}", tries, MAX_RETRY, ex),
                 () -> LOGGER.error("All ack retries failed!"));
     }
 
     private void publishInternal(byte[] bytes) throws IOException {
-        if (!messenger.isConnected()) {
+        if (!messenger.isConnected() || messenger.isClosing()) {
             return;
         }
 
@@ -122,7 +112,7 @@ public abstract class AbstractQueue {
     }
 
     private void ackInternal(long deliveryTag) throws IOException {
-        if (!messenger.isConnected()) {
+        if (!messenger.isConnected() || messenger.isClosing()) {
             return;
         }
 
