@@ -26,14 +26,14 @@ public class MessageFactory {
     public static Component playerJoined(Player player) {
         return Component.empty()
                 .append(ComponentParser.parsePlayer(player))
-                .append(Component.text("登入了服务器"))
+                .append(Component.text(" 登入了服务器"))
                 .color(NamedTextColor.YELLOW);
     }
 
     public static Component playerLeft(Player player) {
         return Component.empty()
                 .append(ComponentParser.parsePlayer(player))
-                .append(Component.text("登出了服务器"))
+                .append(Component.text(" 登出了服务器"))
                 .color(NamedTextColor.YELLOW);
     }
 }

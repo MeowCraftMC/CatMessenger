@@ -11,8 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractQueue {
 
@@ -25,12 +26,13 @@ public abstract class AbstractQueue {
     @Getter
     private Channel channel;
 
-    // Todo: use future, close after send failed.
-    @Getter
-    private AtomicInteger sending = new AtomicInteger(0);
+    private final AMQP.BasicProperties properties;
+
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public AbstractQueue(CatMessenger messenger) {
         this.messenger = messenger;
+        this.properties = new AMQP.BasicProperties.Builder().appId(messenger.getClientId()).build();
     }
 
     protected abstract Consumer createConsumer();
@@ -60,43 +62,45 @@ public abstract class AbstractQueue {
         channel.basicConsume(getQueueName(), false, createConsumer());
     }
 
-    protected void addSending() {
-        sending.getAndIncrement();
-    }
-
-    protected void removeSending() {
-        sending.getAndDecrement();
-    }
-
     @SneakyThrows
     public void disconnect() {
+        try {
+            if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+                if (!executor.awaitTermination(30, TimeUnit.SECONDS)) {
+                    LOGGER.error("Pool did not terminate");
+                }
+            }
+        } catch (InterruptedException ex) {
+            executor.shutdownNow();
+        }
+
         if (channel.isOpen()) {
             channel.close();
         }
     }
 
     protected void publish(byte[] bytes) {
-        RetryingUtil.runWithRetry(() -> {
-                    addSending();
-                    publishInternal(bytes);
-                },
+        RetryingUtil.runWithRetry(executor,
+                () -> publishInternal(bytes),
                 MAX_RETRY,
-                this::removeSending,
+                () -> {},
                 (ex, tries) -> LOGGER.warn("Publish failed, retrying({}/{}): {}", tries, MAX_RETRY, ex),
                 () -> LOGGER.error("All publish retries failed!"));
     }
 
     protected void ack(long deliveryTag) {
-        RetryingUtil.runWithRetry(() -> ackInternal(deliveryTag),
+        RetryingUtil.runWithRetry(executor,
+                () -> ackInternal(deliveryTag),
                 MAX_RETRY,
                 () -> {},
                 (ex, tries) -> LOGGER.warn("Ack failed, retrying({}/{}}): {}", tries, MAX_RETRY, ex),
                 () -> LOGGER.error("All ack retries failed!"));
     }
 
-    private void publishInternal(byte[] bytes) throws IOException {
+    private boolean ensureConnected() throws IOException {
         if (!messenger.isConnected() || messenger.isClosing()) {
-            return;
+            return false;
         }
 
         if (getChannel() == null) {
@@ -107,21 +111,20 @@ public abstract class AbstractQueue {
             getChannel().basicRecover();
         }
 
-        var props = new AMQP.BasicProperties.Builder().appId(messenger.getClientId()).build();
-        getChannel().basicPublish(getExchangeName(), getRoutingKey(), props, bytes);
+        return true;
+    }
+
+    private void publishInternal(byte[] bytes) throws IOException {
+        if (!ensureConnected()) {
+            return;
+        }
+
+        getChannel().basicPublish(getExchangeName(), getRoutingKey(), properties, bytes);
     }
 
     private void ackInternal(long deliveryTag) throws IOException {
-        if (!messenger.isConnected() || messenger.isClosing()) {
+        if (!ensureConnected()) {
             return;
-        }
-
-        if (getChannel() == null) {
-            connect();
-        }
-
-        if (!getChannel().isOpen()) {
-            getChannel().basicRecover();
         }
 
         getChannel().basicAck(deliveryTag, false);

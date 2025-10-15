@@ -15,7 +15,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 public abstract class AbstractNotify<MESSAGE> extends AbstractQueue {
     protected static final Gson GSON = new GsonBuilder()

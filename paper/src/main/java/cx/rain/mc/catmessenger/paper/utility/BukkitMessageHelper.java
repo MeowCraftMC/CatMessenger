@@ -60,7 +60,7 @@ public class BukkitMessageHelper {
     }
 
     public static Component petDeath(Player player, Component message) {
-        return message.append(Component.newline())
+        return message.append(Component.text("，"))
                 .append(ComponentParser.parsePlayer(player).append(Component.text(" 非常伤心")));
     }
 
