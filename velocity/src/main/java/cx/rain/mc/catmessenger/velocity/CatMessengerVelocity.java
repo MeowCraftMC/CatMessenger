@@ -44,7 +44,9 @@ public final class CatMessengerVelocity {
 
     @Subscribe
     public void onProxyInit(ProxyInitializeEvent event) {
-        this.messenger.connect();
+        if (config.get().getRabbitMQ().isEnabled()) {
+            this.messenger.connect();
+        }
 
         sendMessage(MessageFactory.serverOnline(true));
         logger.info("Loaded!");
@@ -54,7 +56,9 @@ public final class CatMessengerVelocity {
     public void onProxyShutdown(ProxyShutdownEvent event) {
         sendMessage(MessageFactory.serverOffline(true));
 
-        this.messenger.disconnect();
+        if (config.get().getRabbitMQ().isEnabled()) {
+            this.messenger.disconnect();
+        }
         logger.info("Bye~");
     }
 

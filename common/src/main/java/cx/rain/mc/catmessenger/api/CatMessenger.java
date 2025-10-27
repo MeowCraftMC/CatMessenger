@@ -53,7 +53,7 @@ public class CatMessenger {
 
     @SneakyThrows
     public void connect() {
-        if (closing || connection.isOpen()) {
+        if (closing || isConnected()) {
             return;
         }
 

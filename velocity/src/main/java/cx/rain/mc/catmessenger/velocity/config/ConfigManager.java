@@ -67,6 +67,8 @@ public class ConfigManager {
         @Setter
         @ConfigSerializable
         public static class RabbitMQConfig {
+            private boolean enabled = false;
+
             private String host = "localhost";
 
             private int port = 5672;
