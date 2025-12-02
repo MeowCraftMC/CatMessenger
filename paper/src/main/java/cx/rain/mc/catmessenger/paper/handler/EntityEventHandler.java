@@ -5,6 +5,7 @@ import cx.rain.mc.catmessenger.paper.utility.BukkitMessageHelper;
 import cx.rain.mc.catmessenger.paper.utility.MessengerHelper;
 import io.papermc.paper.event.entity.TameableDeathMessageEvent;
 import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,6 +37,10 @@ public class EntityEventHandler implements Listener {
         }
 
         var entity = event.getEntity();
+        if (entity instanceof Player) {
+            return;
+        }
+
         if (entity instanceof Tameable) {
             return;
         }
